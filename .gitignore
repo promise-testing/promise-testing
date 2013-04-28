@@ -1,0 +1,6 @@
+.idea/
+node_modules/
+jasmine-*.js
+jasmineAdapter-*.js
+npm-debug.log
+components

@@ -1,0 +1,29 @@
+{
+  "name": "promise-testing",
+  "version": "0.0.0",
+  "description": "a utility for testing promise code",
+  "main": "promise-testing.js",
+  "scripts": {
+    "test": "mocha --check-leaks -c -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.jrtechnical.com:promise-testing"
+  },
+  "keywords": [
+    "promise",
+    "testing",
+    "mocha",
+    "chai"
+  ],
+  "author": "James Talmage",
+  "license": "MIT",
+  "optionalDependencies": {
+    "chai": "~1.5.0"
+  },
+  "devDependencies": {
+    "q": "~0.9.3",
+    "sinon-chai": "~2.4.0",
+    "sinon": "~1.6.0"
+  }
+}

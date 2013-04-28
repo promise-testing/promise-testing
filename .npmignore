@@ -1,0 +1,6 @@
+.idea/
+test/
+npm-debug.log
+.git/
+jasmine-*.js
+jasmineAdapter-*.js
