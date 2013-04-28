@@ -11,9 +11,36 @@ function(){
             thenPropertyHandlers[prop] = handler;
         }
 
+        function createExecutionArgs(stack){
+            function callStack(_result){
+                var index = 0;
+                function next(result){
+                    if(index >= stack.length){
+                        _result = result;
+                        return;
+                    }
+                    var handler = stack[index];
+                    index++;
+                    return handler.execute(result,next);
+                }
+                next(_result);
+                return _result;
+            }
+
+            return [
+                callStack
+            ];
+        }
+
+        function createHandler(propName){
+            var handler = new thenPropertyHandlers[propName](propName);
+            //handler.propName = propName;  //NO-not w/out a test case you don't
+            return handler;
+        }
+
         function wrapPromise(promise){
 
-            var stack = [];
+            var stack,currentExecutionHandler;
 
             function execute(){
                 currentExecutionHandler.apply(null,arguments);
@@ -25,34 +52,31 @@ function(){
             }
 
             function createAndPushHandler(propName){
-                var handler = new thenPropertyHandlers[propName](propName);
-                if (handler.recordExecution) {
-                    currentExecutionHandler = handler.recordExecution.bind(handler);
-                } else {
-                    currentExecutionHandler = function () {
-                        throw Error('property ' + propName + ' can not be executed')
-                    };
-                }
+                var handler = createHandler(propName);
+                currentExecutionHandler = handler.recordExecution
+                    ? handler.recordExecution.bind(handler)
+                    : function() {throw Error('property ' + propName + ' can not be executed');};
                 stack.push(handler);
-                return handler;
             }
 
-            var currentExecutionHandler = simpleThenCall;
-
-            function addExecuteGetter(propName,onGet){
+            function addChainableGetter(propName,onGet){
                 Object.defineProperty(execute,propName,{
                     get:function(){
                         onGet(propName);
+                        if(stack.length == 1) promise = promise.then.apply(promise,createExecutionArgs(stack));
                         return execute;
                     }
                 });
             }
 
-            addExecuteGetter('then',function(){});
+            addChainableGetter('then',function(){
+                stack = [];
+                currentExecutionHandler = simpleThenCall;
+            });
 
             for(var propName in thenPropertyHandlers){
                 if(thenPropertyHandlers.hasOwnProperty(propName)){
-                    addExecuteGetter(propName,createAndPushHandler);
+                    addChainableGetter(propName,createAndPushHandler);
                 }
             }
 
