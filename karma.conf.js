@@ -14,7 +14,7 @@ files = [
     REQUIRE_ADAPTER,
     {pattern:'node_modules/**/*.js',included:false, watched:false},
     {pattern:'test/**/*test.js', included:false},
-    {pattern: 'promise-testing.js', included: true},
+    {pattern: 'promise-testing.js', included: false},
     {pattern:'test-main-file.js', included:true },
     {pattern: 'lib/*.js', included: false}
 ];
@@ -28,7 +28,7 @@ exclude = [
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['progress','growl'];
+reporters = ['dots','growl'];
 
 
 // web server port

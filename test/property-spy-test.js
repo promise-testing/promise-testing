@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','property-spy'],
+define(['chai','sinon','sinon-chai','../lib/property-spy.js'],
 
 function(chai,sinon,sinonChai,spyProp){
 
@@ -94,6 +94,7 @@ function(chai,sinon,sinonChai,spyProp){
             expect(count(setFilter('last'))).to.equal(2);
         });
 
+        //Circular references will make JSON.stringify explode - internally we have wrapped those values.
         it('circular references will not make it explode',function(){
             obj = {first:'James', last:'Talmage'};
             var obj2 = {first:'Susan', last:'Talmage', spouse:obj};
@@ -112,11 +113,70 @@ function(chai,sinon,sinonChai,spyProp){
 
             expect(count(anyAccess(),obj2)).to.equal(0);
 
-           // console.log(getLogs());
+            obj2.spouse;
 
-
-
+            expect(count(anyAccess(),obj2)).to.equal(1);
         });
+
+        it('property descriptor accessor methods will not be interfered with',function(){
+            var val = 'bar';
+            obj = {
+                get foo(){return 'foo' + val},
+                set foo(newVal){val = newVal;}
+            };
+
+            spyProp(obj,'foo');
+
+            expect(obj.foo).to.equal('foobar');
+            obj.foo = 'baz';
+            expect(obj.foo).to.equal('foobaz');
+        });
+
+
+
+        it('non-configurable will be handled',function(){
+            obj = {};
+            var val = 'bar';
+            Object.defineProperty(obj,'foo',{
+                get:function(){
+                    return 'foo' + val;
+                },
+                set:function(newVal){
+                    val = newVal;
+                    return 'foo' + val;
+                },
+                configurable:false
+            });
+
+            expect(function(){spyProp(obj,'foo')}).to.throw();
+        });
+
+        it('understanding getters and setters',function(){
+            //missing getter/setter doesn't cause any errors to be thrown if you try to read / write the propery
+            //nothing happens.
+
+            var noGetter = {set foo(val){}}, noSetter = {get foo(){return ''}};
+            expect(noGetter['foo']).to.be.undefined;
+
+            noSetter['foo'] = 'a value';
+
+            expect(noSetter.foo).to.equal('');
+
+            var unwritable = {};
+
+            Object.defineProperty(unwritable,'foo',{value:'bar',writable:false});
+
+            unwritable.foo = "hello";
+            expect(unwritable.foo).to.equal('bar');
+        });
+
+        it('understanding property descriptors - they don\'t propagate value',function(){
+            var meObj = {x:'hello'};
+            Object.getOwnPropertyDescriptor(meObj,'x').value = 'goodbye';
+            expect(meObj.x).to.equal('hello');
+        });
+
+        it('watcher is not enumerated')
 
     });
 }
