@@ -1,7 +1,7 @@
 if(!(typeof require === "function" && typeof exports === "object" && typeof module === "object")){
     var tests = Object.keys(window.__karma__.files).filter(function (file) {
         if( /^\/base\/test\/.*test\.js$/.test(file)){
-            console.log("GOOD TO GO: " + file);
+            //console.log("GOOD TO GO: " + file);
             return true;
         }
         return false;

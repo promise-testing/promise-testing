@@ -1,7 +1,14 @@
 //RequireJS && NodeJS Define Boilerplate
-({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
+//noinspection JSUnresolvedVariable
+//({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
+
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
+
 define([],
 function(){
+    'use strict';
 
     return function(){
 
@@ -20,26 +27,32 @@ function(){
                         result:result,
                         reason:reason
                     };
+
                 function next(_result){
                     if(index >= stack.length){
-                        lastResult = _result
+                        lastResult = _result;
                         return;
                     }
                     stack[index++].execute(_result,next,ctx);
                 }
+
                 next(null);
+                //noinspection JSUnusedAssignment
                 return lastResult;
             }
 
             return [
                 callStack,
-                function(result){callStack(null,result)}
+                function(result){return callStack(null,result)}
             ];
         }
 
         function createHandler(propName){
             var handler = new thenPropertyHandlers[propName](propName);
-            //handler.propName = propName;  //NO-not w/out a test case you don't
+            if(handler.propName && handler.propName !== propName){
+                throw Error('Handler for .' + propName + ' tried to set its own propName of ' + handler.propName);
+            }
+            handler.propName = propName;
             return handler;
         }
 

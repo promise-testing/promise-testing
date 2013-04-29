@@ -7,17 +7,65 @@ function(chai,sinon,sinonChai,q,PromiseTester){
     var expect = chai.expect,
         match = sinon.match;
 
+    function assertFn(fn,message){
+        if(typeof fn !== 'function') throw Error(message + ' is not a function. Got: ' + fn);
+    }
+
+    /**
+     * Hack of deferred - calls to then() on promise just push handlers into an array.
+     * It wont actually handle any of the actual chaining of subsequent then commands.
+     * resolve and reject methods can take extra index argument
+     */
+    function SpyDeferred(){
+        var resolveHandlers = [], rejectHandlers = [];
+
+        var promise = {
+            then:function(resultHandler,rejectionHandler){
+                if(resultHandler) assertFn(resultHandler, 'bad then call resultHandler:' + resolveHandlers.length);
+                if(rejectionHandler) assertFn(rejectionHandler, 'bad then call rejectionHandler:' + rejectHandlers.length);
+                resolveHandlers.push(resultHandler);
+                rejectHandlers.push(rejectionHandler);
+
+                return promise;
+            }
+        };
+        this.promise = promise;
+
+        function handleStep(array,name,arg,index){
+            if(typeof index !== 'number'){
+                index = 0;
+            }
+            var handler = array[index];
+            assertFn(handler,'attempt to ' + name + ' failed. ' + name + 'Handlers[ ' + index+']');
+
+            return handler(arg);
+        }
+
+        this.reject = handleStep.bind(null,rejectHandlers,'reject');
+        this.resolve = handleStep.bind(null,resolveHandlers,'resolve');
+
+        sinon.spy(this,'reject');
+        sinon.spy(this,'resolve');
+        sinon.spy(promise,'then');
+
+
+    }
+
     describe('promise-testing',function(){
-        var deferreds,promise,engine,promises,handler1,handler2;
+        var deferreds,promise,engine,promises,handler1,handler2, createDeferred,createRealDeferred;
         beforeEach(function(){
             deferreds = [];
             promises = [];
             engine = new PromiseTester();
             handler1 = namedHandler('handler1');
             handler2 = namedHandler('handler2');
+            createDeferred = function(){return new SpyDeferred();};
+            createRealDeferred = function(){return q.defer();};
+
+
             promise = {//lazy wrapping - allows us to add properties without having to call wrap afterwards
                 get then(){
-                    var  deferred = q.defer(), promise = engine.wrap(deferred.promise);
+                    var  deferred = createDeferred(), promise = engine.wrap(deferred.promise);
                     deferreds.push(deferred);
                     promises.push(promise);
                     return promise.then;
@@ -27,6 +75,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('wrapped promises can use then just like a standard promise',function(done){
+            createDeferred = createRealDeferred;
             promise.then(
                 function(result){
                     expect(result).to.equal('hello');
@@ -203,7 +252,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
 
-        it('fulfilling a promise will call "execute" on each handler', function(done){
+        it('fulfilling a promise will call "execute" on each handler', function(){
             engine.addThenProperty('result',function(){
                 this.execute=function(nl,next,ctx){next(ctx.result);};
             });
@@ -212,27 +261,16 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             engine.addThenProperty('prop3',handler1);
 
 
-            promise.then.result.prop1.prop2.prop3
-                .then(function(result){
-                    expect(handler1.firstInstance.execute).to.have.been.calledWith('hello');
-                    expect(handler2.firstInstance.execute).to.have.been.calledWith('goodbye');
-                    expect(handler1.secondInstance.execute).to.have.been.calledWith('adios');
-                    expect(result).to.equal('sionara');
-                    return 'booya';
-                })
-                .then(
-                    function(result){
-                        expect(result).to.equal('booya')
-                    },
-                    done
-            ).then(function(){done()},done);
-
+            promise.then.result.prop1.prop2.prop3;
 
             handler1.firstInstance.execute.callsArgWith(1,'goodbye');
             handler2.firstInstance.execute.callsArgWith(1,'adios');
             handler1.secondInstance.execute.callsArgWith(1,'sionara');
-
             deferreds[0].resolve('hello');
+
+            expect(handler1.firstInstance.execute).to.have.been.calledWith('hello');
+            expect(handler2.firstInstance.execute).to.have.been.calledWith('goodbye');
+            expect(handler1.secondInstance.execute).to.have.been.calledWith('adios');
         });
 
 
@@ -244,15 +282,66 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             }
         );
 
-        it('propName will be automatically set???');
+        it('a handler will have its .propName property set automatically after instantiation',function(){
+            var instances = [];
+            function myHandler(propName){
+                instances.push(this);
+            }
+            engine.addThenProperty('prop1',myHandler);
+            engine.addThenProperty('prop2',myHandler);
 
-        it('fulfilling a promise will call "execute" on each handler, in stack order, with correct stack entries, and a ctx');
+            promise.then.prop1.prop2;
+
+            expect(instances).to.have.length(2);
+            expect(instances[0]).to.have.property('propName','prop1');
+            expect(instances[1]).to.have.property('propName','prop2');
+        });
+
+        it('a handler that set its own but differing propName value will cause an error',function(){
+            function myHandler(propName){
+                this.propName = "NOT THE RIGHT PROP";
+            }
+            engine.addThenProperty('prop1',myHandler);
+
+            expect(function(){promise.then.prop1}).to.throw(/NOT THE RIGHT PROP/i);
+        });
+
+        it('each handler will be passed the same execution context',function(){
+            engine.addThenProperty('prop1',handler1);
+            engine.addThenProperty('prop2',handler1);
+            engine.addThenProperty('prop3',handler1);
+
+            promise.then.prop1.prop2.prop3;
+
+            handler1.firstInstance.execute.callsArgWith(1,'goodbye');
+            handler1.secondInstance.execute.callsArgWith(1,'adios');
+            handler1.thirdInstance.execute.callsArgWith(1,'sionara');
+
+            deferreds[0].resolve('hello');
+
+
+            var ctx = handler1.firstInstance.execute.firstCall.args[2];
+            expect(handler1.secondInstance.execute.firstCall.args[2]).to.equal(ctx);
+            expect(handler1.thirdInstance.execute.firstCall.args[2]).to.equal(ctx);
+        });
+
+        it('rejection will make reason available on ctx',function(){
+            engine.addThenProperty('prop1',handler1);
+            promise.then.prop1;
+            deferreds[0].reject('blah');
+            expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');
+        });
+
+        it('expecting rejection of the previous step');
+        it('passing a value to the next step');
+        it('allowing current value to continue a value');
         it('And-able expectations - allow multiple expectations during same promise');
         it('standard then statements (with functions) can be inserted in the middle of then chain - rejection, etc');
         it('rejections will fast fail through?');
         it('rejections / exceptions will both be handled');
         it('onResolution, onRejection');
         it('notify can be used to call done');
+        it('API Patching functions')
     });
 
 });
