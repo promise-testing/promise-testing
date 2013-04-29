@@ -204,21 +204,28 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
 
         it('fulfilling a promise will call "execute" on each handler', function(done){
+            engine.addThenProperty('result',function(){
+                this.execute=function(nl,next,ctx){next(ctx.result);};
+            });
             engine.addThenProperty('prop1',handler1);
             engine.addThenProperty('prop2',handler2);
             engine.addThenProperty('prop3',handler1);
 
 
-            promise.then.prop1.prop2.prop3
+            promise.then.result.prop1.prop2.prop3
                 .then(function(result){
-                    //expect(result).to.equal('sionara');
                     expect(handler1.firstInstance.execute).to.have.been.calledWith('hello');
                     expect(handler2.firstInstance.execute).to.have.been.calledWith('goodbye');
                     expect(handler1.secondInstance.execute).to.have.been.calledWith('adios');
-
                     expect(result).to.equal('sionara');
+                    return 'booya';
                 })
-                .then(function(){done();},done);
+                .then(
+                    function(result){
+                        expect(result).to.equal('booya')
+                    },
+                    done
+            ).then(function(){done()},done);
 
 
             handler1.firstInstance.execute.callsArgWith(1,'goodbye');
@@ -228,10 +235,18 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             deferreds[0].resolve('hello');
         });
 
-        it('propName will be automatically set???');
-        it('fulfilling a promise will call "execute" on each handler, in stack order, with correct stack entries, and a ctx');
 
-        it('unimplemented recordExecution will give meaningful error if execution is attempted');
+        it('a handler with unimplemented recordExecution will give a meaningful error if execution is attempted',
+            function(){
+                engine.addThenProperty('myProp',function(){});
+                expect(function(){promise.then.myProp}).not.to.throw();
+                expect(function(){promise.then.myProp()}).to.throw(/myProp/i);
+            }
+        );
+
+        it('propName will be automatically set???');
+
+        it('fulfilling a promise will call "execute" on each handler, in stack order, with correct stack entries, and a ctx');
         it('And-able expectations - allow multiple expectations during same promise');
         it('standard then statements (with functions) can be inserted in the middle of then chain - rejection, etc');
         it('rejections will fast fail through?');

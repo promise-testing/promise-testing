@@ -12,23 +12,28 @@ function(){
         }
 
         function createExecutionArgs(stack){
-            function callStack(_result){
-                var index = 0;
-                function next(result){
+            function callStack(result,reason){
+
+                var index = 0,
+                    lastResult,
+                    ctx = {
+                        result:result,
+                        reason:reason
+                    };
+                function next(_result){
                     if(index >= stack.length){
-                        _result = result;
+                        lastResult = _result
                         return;
                     }
-                    var handler = stack[index];
-                    index++;
-                    return handler.execute(result,next);
+                    stack[index++].execute(_result,next,ctx);
                 }
-                next(_result);
-                return _result;
+                next(null);
+                return lastResult;
             }
 
             return [
-                callStack
+                callStack,
+                function(result){callStack(null,result)}
             ];
         }
 
