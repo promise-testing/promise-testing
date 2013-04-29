@@ -130,7 +130,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             deferred.resolve(7);
         });
 
-
         it('above and below should fail low',function(done){
             promise.then.expect.above(5).and.below(10).then.shouldFail(done);
             deferred.resolve(5);
