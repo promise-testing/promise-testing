@@ -98,8 +98,23 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         it('multiple expects',function(done){
             promise.then.expect.property('a',1).expect.property('b',2).then.notify(done);
 
-            deferred.resolve({a:1,b:2})
-        })
+            deferred.resolve({a:1,b:2});
+        });
+
+        it('above and below',function(done){
+            promise.then.expect.above(5).and.below(10).then.notify(done);
+            deferred.resolve(7);
+        });
+
+        it('above and below',function(done){
+            promise.then.expect.at.least(5).and.at.most(10).then.notify(done);
+            deferred.resolve(10);
+        });
+
+        it('deep equal',function(done){
+            promise.then.expect.deep.equal({a:1,b:2}).then.notify(done);
+            deferred.resolve({a:1,b:2});
+        });
 
     });
 
