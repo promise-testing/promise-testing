@@ -332,6 +332,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');
         });
 
+        it('pulling in other values besides the result/reason (i.e. stubs/spys/mocks, etc)');
         it('expecting rejection of the previous step');
         it('passing a value to the next step');
         it('allowing current value to continue a value');

@@ -7,7 +7,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
     var expect = chai.expect,
         match = sinon.match;
 
-    describe('lets do it',function(){
+    describe('chai-flavor',function(){
         var engine,deferred,promise;
 
         function EchoHandler(){
@@ -59,11 +59,26 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             }
         };
 
+        function ShouldFail(){
+        }
+        ShouldFail.prototype.recordExecution = function(done){
+            this.done = done;
+        };
+        ShouldFail.prototype.execute = function(lastResult,next,ctx){
+            if(ctx.reason){
+                this.done();
+            }
+            else {
+                this.done(Error('There Should have been a failure!'));
+            }
+        };
+
 
         before(function(){
             engine = new PromiseTester();
             engine.addThenProperty('expect',ExpectHandler);
             engine.addThenProperty('notify',NotifyDone);
+            engine.addThenProperty('shouldFail',ShouldFail);
 
             ['to','be','been','is','that','and','have','with','at','of','not','deep','ok','true','false',
                 'null','undefined','exist','empty',/*'arguments',*/'itself'].forEach(function(prop){
@@ -83,16 +98,25 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             promise = engine.wrap(deferred.promise);
         });
 
-        it('simple equals',function(done){
+        it('equals should pass',function(done){
             promise.then.expect('result').to.equal('hello').then.notify(done);
-
             deferred.resolve('hello');
         });
 
-        it('simple rejection equals',function(done){
-            promise.then.expect('rejection').to.equal('goodbye').then.notify(done);
+        it('equals should fail',function(done){
+            promise.then.expect('result').to.equal('hello').then.shouldFail(done);
+            deferred.resolve('goodbye');
+        });
 
+        it('rejection equals should pass',function(done){
+            promise.then.expect('rejection').to.equal('goodbye').then.notify(done);
             deferred.reject('goodbye');
+        });
+
+
+        it('rejection equals should fail',function(done){
+            promise.then.expect('rejection').to.equal('goodbye').then.shouldFail(done);
+            deferred.reject('hello');
         });
 
         it('multiple expects',function(done){
@@ -101,14 +125,40 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             deferred.resolve({a:1,b:2});
         });
 
-        it('above and below',function(done){
+        it('above and below should pass',function(done){
             promise.then.expect.above(5).and.below(10).then.notify(done);
             deferred.resolve(7);
         });
 
-        it('above and below',function(done){
+
+        it('above and below should fail low',function(done){
+            promise.then.expect.above(5).and.below(10).then.shouldFail(done);
+            deferred.resolve(5);
+        });
+
+        it('above and below should fail high',function(done){
+            promise.then.expect.above(5).and.below(10).then.shouldFail(done);
+            deferred.resolve(10);
+        });
+
+        it('at least and at most should pass low',function(done){
+            promise.then.expect.at.least(5).and.at.most(10).then.notify(done);
+            deferred.resolve(5);
+        });
+
+        it('at least and at most should pass high',function(done){
             promise.then.expect.at.least(5).and.at.most(10).then.notify(done);
             deferred.resolve(10);
+        });
+
+        it('at least and at most should fail low',function(done){
+            promise.then.expect.at.least(5).and.at.most(10).then.shouldFail(done);
+            deferred.resolve(4);
+        });
+
+        it('at least and at most should fail high',function(done){
+            promise.then.expect.at.least(5).and.at.most(10).then.shouldFail(done);
+            deferred.resolve(11);
         });
 
         it('deep equal',function(done){
