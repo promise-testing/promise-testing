@@ -3,9 +3,10 @@
 
 define(['chai','sinon','sinon-chai','Q','../promise-testing.js'],
 function(chai,sinon,sinonChai,q,PromiseTester){
-    chai.use(sinonChai);
+    //chai.use(sinonChai);
     var expect = chai.expect,
         match = sinon.match;
+
 
     describe('chai-flavor',function(){
         var engine,deferred,promise;
@@ -164,6 +165,30 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             promise.then.expect.deep.equal({a:1,b:2}).then.notify(done);
             deferred.resolve({a:1,b:2});
         });
+
+        it('list props',function(){
+            var list = [];
+            Object.getOwnPropertyNames(chai.Assertion.prototype).forEach(function (val){
+                if(true){//val != 'not'){
+                    var type = 'ERROR ACCESSING';
+                    var log = true;
+                    try {
+                        type = typeof chai.Assertion.prototype[val];
+                        //log = false;
+                    }
+                    catch(e){/*console.log(val + e)*/}
+                    if(log) console.log(val + ":" + type) ;
+                    list.push(val);
+
+                }
+            });
+        });
+
+        it.only('proto support',function(){
+
+            var hasProtoSupport = '__proto__' in Object;
+            console.log('proto support: ' + hasProtoSupport);
+        })
 
     });
 

@@ -1,7 +1,3 @@
-//RequireJS && NodeJS Define Boilerplate
-//noinspection JSUnresolvedVariable
-//({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
-
 if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
@@ -22,23 +18,20 @@ function(){
             function callStack(result,reason){
 
                 var index = 0,
-                    lastResult,
                     ctx = {
                         result:result,
-                        reason:reason
+                        reason:reason,
+                        returnValue:result
                     };
 
                 function next(_result){
-                    if(index >= stack.length){
-                        lastResult = _result;
-                        return;
-                    }
+                    if(index >= stack.length) return;
                     stack[index++].execute(_result,next,ctx);
                 }
 
                 next(null);
                 //noinspection JSUnusedAssignment
-                return lastResult;
+                return ctx.returnValue;
             }
 
             return [
@@ -83,7 +76,8 @@ function(){
                         onGet(propName);
                         if(stack.length == 1) promise = promise.then.apply(promise,createExecutionArgs(stack));
                         return execute;
-                    }
+                    },
+                    configurable:true
                 });
             }
 
