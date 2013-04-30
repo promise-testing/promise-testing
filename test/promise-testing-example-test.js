@@ -1,9 +1,9 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','Q','../promise-testing.js'],
+define(['chai','sinon','sinon-chai','Q','promise-testing'],
 function(chai,sinon,sinonChai,q,PromiseTester){
-    //chai.use(sinonChai);
+    chai.use(sinonChai);
     var expect = chai.expect,
         match = sinon.match;
 
@@ -177,7 +177,13 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             Object.getOwnPropertyNames(proto).forEach(function (val){
                 var descriptor = Object.getOwnPropertyDescriptor(proto,val);
                 if(descriptor.configurable && descriptor.get){
-                    var type = typeof descriptor.get.call(target);
+
+                    var type = 'Error Accessing';
+                    try {
+                        type = typeof descriptor.get.call(target);
+                    } catch(e){
+
+                    }
                     console.log(val + ': ' + type);
                 }
                 if(!descriptor.configurable){
@@ -190,10 +196,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('proto support',function(){
-
             var hasProtoSupport = '__proto__' in Object;
             console.log('proto support: ' + hasProtoSupport);
-        })
+        });
 
     });
 

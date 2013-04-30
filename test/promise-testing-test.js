@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','Q','../promise-testing.js'],
+define(['chai','sinon','sinon-chai','Q','promise-testing'],
 function(chai,sinon,sinonChai,q,PromiseTester){
     chai.use(sinonChai);
     var expect = chai.expect,
@@ -330,6 +330,15 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             promise.then.prop1;
             deferreds[0].reject('blah');
             expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');
+        });
+
+        it('has property returns false if that property isnt defined yet',function(){
+            expect(engine.hasProperty('myProp')).to.equal(false);
+        });
+
+        it('has property returns true if that property is already defined',function(){
+            engine.addProperty('myProp',handler1);
+            expect(engine.hasProperty('myProp')).to.equal(true);
         });
 
         it('pulling in other values besides the result/reason (i.e. stubs/spys/mocks, etc)');

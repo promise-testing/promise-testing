@@ -7,16 +7,14 @@ if(!(typeof require === "function" && typeof exports === "object" && typeof modu
 
     requirejs.config({
         // Karma serves files fr om '/base'
-        baseUrl: '/base/',
+        baseUrl: '/base/lib/',
 
         paths: {
-            'chai': 'node_modules/chai/chai',
-            'sinon': 'node_modules/sinon/pkg/sinon',
-            'sinon-chai': 'node_modules/sinon-chai/lib/sinon-chai',
-            'Q':'node_modules/q/q',
-            'promise-testing':'promise-testing',
-            'property-spy':'lib/property-spy',
-            'chai-as-promised':'node_modules/chai-as-promised/lib/chai-as-promised'
+            'chai': '../node_modules/chai/chai',
+            'sinon': '../node_modules/sinon/pkg/sinon',
+            'sinon-chai': '../node_modules/sinon-chai/lib/sinon-chai',
+            'Q':'../node_modules/q/q',
+            'chai-as-promised':'../node_modules/chai-as-promised/lib/chai-as-promised'
         },
                          //asdfa
         shim: {

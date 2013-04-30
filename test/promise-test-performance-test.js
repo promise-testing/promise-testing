@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','../promise-testing.js','chai-as-promised'],
+define(['chai','sinon','sinon-chai','Q','promise-testing','chai-as-promised'],
 function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
 
 
@@ -36,7 +36,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
         testFunc(nextTest);
     }
 
-    describe.only('performance',function(){
+    describe.skip('performance',function(){
 
         function runPromiseEngineTest(done){
             var defer = q.defer();
@@ -129,7 +129,6 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
             this.done(Error('There Should have been a failure!'));
         }
     };
-
 
     before(function(){
         engine = new PromiseTester();

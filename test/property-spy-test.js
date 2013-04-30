@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','../lib/property-spy.js'],
+define(['chai','sinon','sinon-chai','property-spy'],
 
 function(chai,sinon,sinonChai,spyProp){
 
