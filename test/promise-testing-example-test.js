@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','Q','promise-testing'],
+define(['chai','sinon','sinon-chai','Q','promise-testing','chai-flavor'],
 function(chai,sinon,sinonChai,q,PromiseTester){
     chai.use(sinonChai);
     var expect = chai.expect,
@@ -11,7 +11,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
     describe('chai-flavor',function(){
         var engine,deferred,promise;
 
-        function EchoHandler(){
+
+        /*function EchoHandler(){
         }
         EchoHandler.prototype.recordExecution = function(){
             this.args = arguments;
@@ -22,8 +23,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 result = result.apply(lastResult,this.args);
             }
             next(result);
-        };
-
+        };*/
+                    /*
         var echoProps = {};
         function addThenEchoProperty(prop){
             echoProps[prop]=true;
@@ -33,6 +34,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         function ExpectHandler(){
             this.type = 'resolve';
         }
+
         ExpectHandler.prototype.recordExecution = function(type){
             if(/^reject/i.test(type)){
                 this.type = 'reject';
@@ -61,7 +63,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 this.done();
             }
         };
-
+             */
         function ShouldFail(){
         }
         ShouldFail.prototype.recordExecution = function(done){
@@ -76,24 +78,33 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             }
         };
 
-
+           /*
         before(function(){
             engine = new PromiseTester();
             engine.addThenProperty('expect',ExpectHandler);
             engine.addThenProperty('notify',NotifyDone);
             engine.addThenProperty('shouldFail',ShouldFail);
 
+
+            //missing arguments
             ['to','be','been','is','that','and','have','with','at','of','not','deep','ok','true','false',
-                'null','undefined','exist','empty',/*'arguments',*/'itself'].forEach(function(prop){
+                'null','undefined','exist','empty','itself'].forEach(function(prop){
                     addThenEchoProperty(prop,true,false);
                 });
-            ['a','an','contain','include'/*,'length'*/].forEach(function(prop){
+            //missing length
+            ['a','an','contain','include'].forEach(function(prop){
                 addThenEchoProperty(prop,true,true);
             });
             ['equal','eql','above','least','below','most','within','instanceof','property','ownProperty'
                 ,'match','string','keys','throw','respondTo','satisfy','closeTo'].forEach(function(prop){
                     addThenEchoProperty(prop,false,true);
                 });
+        });      */
+
+        before(function(){
+            engine = new PromiseTester();
+            engine.scanChai();
+            engine.addThenProperty('shouldFail',ShouldFail);
         });
 
         beforeEach(function(){
@@ -168,7 +179,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             deferred.resolve({a:1,b:2});
         });
 
-        it('list props',function(){
+        it.skip('list props',function(){
             var list = [];
             var proto = chai.Assertion.prototype;
 
@@ -195,7 +206,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             });
         });
 
-        it('proto support',function(){
+        it.skip('proto support',function(){
             var hasProtoSupport = '__proto__' in Object;
             console.log('proto support: ' + hasProtoSupport);
         });
