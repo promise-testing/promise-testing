@@ -24,7 +24,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             next(result);
         };
 
+        var echoProps = {};
         function addThenEchoProperty(prop){
+            echoProps[prop]=true;
             engine.addThenProperty(prop,EchoHandler);
         }
 
@@ -168,23 +170,26 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
         it('list props',function(){
             var list = [];
-            Object.getOwnPropertyNames(chai.Assertion.prototype).forEach(function (val){
-                if(true){//val != 'not'){
-                    var type = 'ERROR ACCESSING';
-                    var log = true;
-                    try {
-                        type = typeof chai.Assertion.prototype[val];
-                        //log = false;
-                    }
-                    catch(e){/*console.log(val + e)*/}
-                    if(log) console.log(val + ":" + type) ;
-                    list.push(val);
+            var proto = chai.Assertion.prototype;
 
+            var target = {assert:function(){}};
+
+            Object.getOwnPropertyNames(proto).forEach(function (val){
+                var descriptor = Object.getOwnPropertyDescriptor(proto,val);
+                if(descriptor.configurable && descriptor.get){
+                    var type = typeof descriptor.get.call(target);
+                    console.log(val + ': ' + type);
+                }
+                if(!descriptor.configurable){
+                    console.log("NOT CONFIGURABLE: " + val);
+                }
+                else if (!descriptor.get){
+                    console.log("NO GETTER: " + val);
                 }
             });
         });
 
-        it.only('proto support',function(){
+        it('proto support',function(){
 
             var hasProtoSupport = '__proto__' in Object;
             console.log('proto support: ' + hasProtoSupport);

@@ -42,10 +42,14 @@ function(){
 
         function createHandler(propName){
             var handler = new thenPropertyHandlers[propName](propName);
-            if(handler.propName && handler.propName !== propName){
-                throw Error('Handler for .' + propName + ' tried to set its own propName of ' + handler.propName);
+            if(handler.propName ){
+                if( handler.propName !== propName){
+                    throw Error('Handler for .' + propName + ' tried to set its own propName of ' + handler.propName);
+                }
             }
-            handler.propName = propName;
+            else {
+                handler.propName = propName;
+            }
             return handler;
         }
 
