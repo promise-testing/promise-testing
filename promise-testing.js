@@ -10,7 +10,7 @@ function(){
 
         var thenPropertyHandlers = {};
 
-        function addThenProperty(prop,handler){
+        function addProperty(prop,handler){
             thenPropertyHandlers[prop] = handler;
         }
 
@@ -101,6 +101,6 @@ function(){
 
         this.wrap = wrapPromise;
 
-        this.addThenProperty = addThenProperty;
+        this.addThenProperty = this.addProperty = addProperty;
     };
 });
