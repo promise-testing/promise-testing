@@ -341,6 +341,90 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(engine.hasProperty('myProp')).to.equal(true);
         });
 
+        it('handlers can find out what properties are called after them',function(){
+
+            var spies = [];
+
+            engine.addProperty('check',function TailHandler(propName,tools){
+                    var spy = sinon.spy();
+                    spies.push(spy);
+                    tools.addPropertyListener(spy);
+                    this.execute = function(){};
+                }
+            );
+
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+
+            promise.then.check.prop1;
+
+            expect(spies).to.have.length(1);
+            expect(spies[0]).to.have.been.calledOnce.and.calledWith('prop1');
+
+
+            promise.then.check.prop2.prop1;
+
+            expect(spies).to.have.length(2);
+            expect(spies[1]).to.have.been.calledTwice;
+            expect(spies[1].firstCall).to.have.been.calledWith('prop2');
+            expect(spies[1].secondCall).to.have.been.calledWith('prop1');
+
+        });
+
+        it('listener is only called for the current chain',function(){
+
+            var spies = [];
+
+            engine.addProperty('check',function TailHandler(propName,tools){
+                    var spy = sinon.spy();
+                    spies.push(spy);
+                    tools.addPropertyListener(spy);
+                    this.execute = function(){};
+                }
+            );
+
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+
+            promise.then.check.prop1.prop1.then.prop2.prop2;
+
+            expect(spies).to.have.length(1);
+            expect(spies[0]).to.have.been.calledTwice;
+            expect(spies[0]).to.have.always.been.calledWith('prop1');
+
+
+        });
+
+
+        it('addPropertyListener returns a callback which removes the listener',function(){
+
+            var spies = [];
+            var remove = [];
+
+            engine.addProperty('check',function TailHandler(propName,tools){
+                    var remove, spy = sinon.spy(function(propName){
+                        if(propName === 'prop2'){
+                            remove();
+                        }
+                    });
+                    spies.push(spy);
+                    remove = tools.addPropertyListener(spy);
+                    this.execute = function(){};
+                }
+            );
+
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+
+            promise.then.check.prop1.prop2.prop1;
+
+            expect(spies).to.have.length(1);
+            expect(spies[0]).to.have.been.calledTwice;
+            expect(spies[0].firstCall).to.have.been.calledWith('prop1');
+            expect(spies[0].secondCall).to.have.been.calledWith('prop2');
+
+        });
+
         it('pulling in other values besides the result/reason (i.e. stubs/spys/mocks, etc)');
         it('expecting rejection of the previous step');
         it('passing a value to the next step');
