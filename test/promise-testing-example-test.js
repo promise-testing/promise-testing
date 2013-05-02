@@ -113,69 +113,74 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('equals should pass',function(done){
-            promise.then.expect('result').to.equal('hello').then.notify(done);
+            promise.then.expect.result.to.equal('hello').then.notify(done);
             deferred.resolve('hello');
         });
 
         it('equals should fail',function(done){
-            promise.then.expect('result').to.equal('hello').then.shouldFail(done);
+            promise.then.expect.result.to.equal('hello').then.shouldFail(done);
             deferred.resolve('goodbye');
         });
 
         it('rejection equals should pass',function(done){
-            promise.then.expect('rejection').to.equal('goodbye').then.notify(done);
+            promise.then.expect.rejection.to.equal('goodbye').then.notify(done);
             deferred.reject('goodbye');
         });
 
 
         it('rejection equals should fail',function(done){
-            promise.then.expect('rejection').to.equal('goodbye').then.shouldFail(done);
+            promise.then.expect.rejection.to.equal('goodbye').then.shouldFail(done);
             deferred.reject('hello');
         });
 
         it('multiple expects',function(done){
-            promise.then.expect.property('a',1).expect.property('b',2).then.notify(done);
+            promise.then.expect.result.property('a',1)
+                        .expect.result.property('b',2)
+                        .then.notify(done);
 
             deferred.resolve({a:1,b:2});
         });
 
         it('above and below should pass',function(done){
-            promise.then.expect.above(5).and.below(10).then.notify(done);
+            promise.then.expect.result.above(5).and.below(10).then.notify(done);
             deferred.resolve(7);
         });
 
         it('above and below should fail low',function(done){
-            promise.then.expect.above(5).and.below(10).then.shouldFail(done);
+            promise.then.expect.result.to.be.above(5).and.below(10).then.shouldFail(done);
             deferred.resolve(5);
         });
 
         it('above and below should fail high',function(done){
-            promise.then.expect.above(5).and.below(10).then.shouldFail(done);
+            promise.then.expect.result.to.be.above(5).and.below(10).then.shouldFail(done);
             deferred.resolve(10);
         });
 
         it('at least and at most should pass low',function(done){
-            promise.then.expect.at.least(5).and.at.most(10).then.notify(done);
+            promise.then.expect.result.to.be.at.least(5).and.at.most(10).then.notify(done);
             deferred.resolve(5);
         });
 
         it('at least and at most should pass high',function(done){
-            promise.then.expect.at.least(5).and.at.most(10).then.notify(done);
+            promise.then.expect.result.to.be.at.least(5).and.at.most(10).then.notify(done);
             deferred.resolve(10);
         });
 
         it('at least and at most should fail low',function(done){
-            promise.then.expect.at.least(5).and.at.most(10).then.shouldFail(done);
+            promise.then.expect.result.to.be.at.least(5).and.at.most(10).then.shouldFail(done);
             deferred.resolve(4);
         });
 
         it('at least and at most should fail high',function(done){
-            promise.then.expect.at.least(5).and.at.most(10).then.shouldFail(done);
+            promise.then.expect.result.to.be.at.least(5).and.at.most(10).then.shouldFail(done);
             deferred.resolve(11);
         });
 
+        it('rejection passes regex',function(){
+           // /^(?:reject(?:ed|ion)?)$/.test('reject');
+        });
         it('deep equal',function(done){
-            promise.then.expect.deep.equal({a:1,b:2}).then.notify(done);
+            promise.then.expect.result.to.deep.equal({a:1,b:2}).then.notify(done);
             deferred.resolve({a:1,b:2});
         });
 
