@@ -1,5 +1,6 @@
 .idea/
 test/
+coverage/
 npm-debug.log
 .git/
 jasmine-*.js

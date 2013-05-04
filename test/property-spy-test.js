@@ -23,13 +23,13 @@ function(chai,sinon,sinonChai,spyProp){
 
         function getFilter(prop){
             return function(val){
-                return val.isGet && (val.prop == prop);
+                return val.isGet && (!prop || (val.prop == prop));
             }
         }
 
         function setFilter(prop){
             return function(val){
-                return (!val.isGet) && (val.prop == prop);
+                return (!val.isGet) && (!prop ||(val.prop == prop));
             }
         }
 
@@ -134,7 +134,7 @@ function(chai,sinon,sinonChai,spyProp){
 
 
 
-        it('non-configurable will be handled',function(){
+        it('non-configurable will throw',function(){
             obj = {};
             var val = 'bar';
             Object.defineProperty(obj,'foo',{
@@ -149,6 +149,63 @@ function(chai,sinon,sinonChai,spyProp){
             });
 
             expect(function(){spyProp(obj,'foo')}).to.throw();
+        });
+
+
+        it('restore returns descriptor to normal',function(){
+            var obj = {foo:'bar'};
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').value).to.not.be.undefined;
+            spyProp(obj,'foo');
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').value).to.be.undefined;
+            obj.___propertySpyCollection.restore();
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').value).to.not.be.undefined;
+        });
+
+
+        it('non-readable properties will not have a get method as a spy',function(){
+            obj = {};
+            var i = 0, val;
+            Object.defineProperty(obj,'foo',{set:function(_val){i++; val = _val;},configurable:true});
+            spyProp(obj,'foo');
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').get).to.be.undefined;
+        });
+
+
+        it('non-writable accessor properties will not have a set method as a spy',function(){
+            obj = {};
+            var i = 0;
+            Object.defineProperty(obj,'foo',{get:function(){return i++;},configurable:true});
+            spyProp(obj,'foo');
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').set).to.be.undefined;
+        });
+
+
+        it('non-writable value properties will not have a set method as a spy',function(){
+            obj = {};
+            var i = 0;
+            Object.defineProperty(obj,'foo',{value:'hello',configurable:true});
+            spyProp(obj,'foo');
+            expect(Object.getOwnPropertyDescriptor(obj,'foo').set).to.be.undefined;
+
+            obj.___propertySpyCollection.restore();
+        });
+
+        it('you can spy multiple properties on an object',function(){
+            obj = {a:1,b:2};
+            spyProp(obj,'a');
+            spyProp(obj,'b');
+
+            expect(count(getFilter())).to.equal(0);
+            obj.a;
+            obj.b;
+            expect(count(getFilter())).to.equal(2);
+        });
+
+        it('spying a second property should use the same spycollection and just add to it',function(){
+            obj = {a:1,b:2};
+            var collection1 = spyProp(obj,'a'), collection2 = spyProp(obj,'b');
+            expect(collection1).to.equal(collection2);
+
         });
 
         it('understanding getters and setters',function(){
@@ -175,6 +232,8 @@ function(chai,sinon,sinonChai,spyProp){
             Object.getOwnPropertyDescriptor(meObj,'x').value = 'goodbye';
             expect(meObj.x).to.equal('hello');
         });
+
+
 
         it('watcher is not enumerated')
 
