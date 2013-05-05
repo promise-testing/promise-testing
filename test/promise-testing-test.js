@@ -17,11 +17,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         return sinon.spy(fn);
     }
 
-    function namedStub(name,fn){
-        if(!fn) fn = function(){};
-        fn.displayName = name;
-        return sinon.stub(fn);
-    }
     function addInstance(collection,val){
         if(!collection.instances) collection.instances = [];
         collection.instances.push(val);
@@ -468,15 +463,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(spies[1].secondCall).to.have.been.calledWith('prop2');
         });
 
-        it('passing a value to the next step');
-        it('allowing current value to continue a value');
-        it('And-able expectations - allow multiple expectations during same promise');
-        it('standard then statements (with functions) can be inserted in the middle of then chain - rejection, etc');
-        it('rejections will fast fail through?');
-        it('rejections / exceptions will both be handled');
-        it('onResolution, onRejection');
-        it('notify can be used to call done');
-        it('API Patching functions')
     });
 
 });

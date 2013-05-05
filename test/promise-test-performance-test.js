@@ -38,6 +38,10 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
 
     describe.skip('performance',function(){
 
+        before(function(){
+
+        });
+
         function runPromiseEngineTest(done){
             var defer = q.defer();
             engine.wrap(defer.promise).then.expect.equal('hello').then.notify(done);
@@ -60,93 +64,6 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
             runTests('ChaiAsPromised',done,runChaiAsPromisedTest);
         });
 
-    });
-
-
-    var engine;
-
-    function EchoHandler(){
-    }
-    EchoHandler.prototype.recordExecution = function(){
-        this.args = arguments;
-    };
-    EchoHandler.prototype.execute = function(lastResult,next){
-        var result = lastResult[this.propName];
-        if(this.args){
-            result = result.apply(lastResult,this.args);
-        }
-        next(result);
-    };
-
-    var echoProps = {};
-    function addThenEchoProperty(prop){
-        echoProps[prop]=true;
-        engine.addThenProperty(prop,EchoHandler);
-    }
-
-    function ExpectHandler(){
-        this.type = 'resolve';
-    }
-    ExpectHandler.prototype.recordExecution = function(type){
-        if(/^reject/i.test(type)){
-            this.type = 'reject';
-        }
-        else if(/^res[ou]l/i.test(type)){
-            this.type = 'resolve'
-        }
-        else {
-            throw Error('Must be reject or resolve');
-        }
-    };
-    ExpectHandler.prototype.execute = function(lastResult,next,ctx){
-        next(expect(ctx[this.type == 'resolve' ? 'result' : 'reason']));
-    };
-
-    function NotifyDone(){
-    }
-    NotifyDone.prototype.recordExecution = function(done){
-        this.done = done;
-    };
-    NotifyDone.prototype.execute = function(lastResult,next,ctx){
-        if(ctx.reason){
-            this.done(ctx.reason);
-        }
-        else {
-            this.done();
-        }
-    };
-
-    function ShouldFail(){
-    }
-    ShouldFail.prototype.recordExecution = function(done){
-        this.done = done;
-    };
-    ShouldFail.prototype.execute = function(lastResult,next,ctx){
-        if(ctx.reason){
-            this.done();
-        }
-        else {
-            this.done(Error('There Should have been a failure!'));
-        }
-    };
-
-    before(function(){
-        engine = new PromiseTester();
-        engine.addThenProperty('expect',ExpectHandler);
-        engine.addThenProperty('notify',NotifyDone);
-        engine.addThenProperty('shouldFail',ShouldFail);
-
-        ['to','be','been','is','that','and','have','with','at','of','not','deep','ok','true','false',
-            'null','undefined','exist','empty',/*'arguments',*/'itself'].forEach(function(prop){
-                addThenEchoProperty(prop,true,false);
-            });
-        ['a','an','contain','include'/*,'length'*/].forEach(function(prop){
-            addThenEchoProperty(prop,true,true);
-        });
-        ['equal','eql','above','least','below','most','within','instanceof','property','ownProperty'
-            ,'match','string','keys','throw','respondTo','satisfy','closeTo'].forEach(function(prop){
-                addThenEchoProperty(prop,false,true);
-            });
     });
 
 
