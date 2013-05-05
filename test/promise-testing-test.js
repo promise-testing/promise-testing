@@ -11,10 +11,72 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         if(typeof fn !== 'function') throw Error(message + ' is not a function. Got: ' + fn);
     }
 
+    function namedSpy(name,fn){
+        if(!fn) fn = function(){};
+        fn.displayName = name;
+        return sinon.spy(fn);
+    }
+
+    function namedStub(name,fn){
+        if(!fn) fn = function(){};
+        fn.displayName = name;
+        return sinon.stub(fn);
+    }
+    function addInstance(collection,val){
+        if(!collection.instances) collection.instances = [];
+        collection.instances.push(val);
+        switch (collection.instances.length){
+            case 1:
+                collection.firstInstance = val;
+                break;
+            case 2:
+                collection.secondInstance = val;
+                break;
+            case 3:
+                collection.thirdInstance = val;
+                break;
+        }
+        collection.lastInstance = val;
+    }
+
+    function namedHandler(name,recordExecution,execute){
+        var handler;
+        function handlerFN(propName){
+            this.propName = propName;
+            this.recordExecution = recordExecution || function(){};
+            this.recordExecution.displayName = name +'['+ propName+'].recordExecution';
+            this.execute = execute || function(){};
+            this.execute.displayName = name +'['+ propName+'].execute';
+            sinon.stub(this,'recordExecution');
+            sinon.stub(this,'execute');
+
+            //this.execute = namedStub(name +'['+ propName+'].execute');
+            addInstance(handler,this);
+            if(!handler[propName]){
+                handler[propName] = {};
+            }
+            addInstance(handler[propName],this);
+        }
+        handlerFN.displayName = name;
+        handler = sinon.spy(handlerFN);
+        handler.instances = [];
+
+        return handler;
+    }
+
     /**
-     * Hack of deferred - calls to then() on promise just push handlers into an array.
+     * Stub of deferred - calls to then() on promise just push handlers into an array.
      * It wont actually handle any of the actual chaining of subsequent then commands.
-     * resolve and reject methods can take extra index argument
+     * In other words promise.then(fn,fn).then(fn,fn) will not flow through as expected.
+     * You must call resolve(result,0) followed by resolve(result,1).
+     *
+     * It also differs from the spec in that it executes handlers synchronously.
+     * This is to avoid littering the tests with a whole bunch of callbacks that
+     * are there to encapsulate and noitfy mocha's done handler.
+     *
+     * All this said - while this is handy for testing some of the frameworks internals,
+     * it should only be used where necessary, as it alters the contract so drastically.
+     * Plenty of testing with 'real' promises will need to be done.
      */
     function SpyDeferred(){
         var resolveHandlers = [], rejectHandlers = [];
@@ -63,7 +125,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             createRealDeferred = function(){return q.defer();};
 
 
-            promise = {//lazy wrapping - allows us to add properties without having to call wrap afterwards
+            //lazy wrapping - allows us to add properties without having to call wrap afterwards
+            promise = {
                 get then(){
                     var  deferred = createDeferred(), promise = engine.wrap(deferred.promise);
                     deferreds.push(deferred);
@@ -122,59 +185,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(instance.recordExecution).to.have.been.calledWith('hello');
             expect(instance.recordExecution.firstCall.thisValue).to.equal(instance);
         });
-
-        function namedSpy(name,fn){
-            if(!fn) fn = function(){};
-            fn.displayName = name;
-            return sinon.spy(fn);
-        }
-
-        function namedStub(name,fn){
-            if(!fn) fn = function(){};
-            fn.displayName = name;
-            return sinon.stub(fn);
-        }
-        function addInstance(collection,val){
-            if(!collection.instances) collection.instances = [];
-            collection.instances.push(val);
-            switch (collection.instances.length){
-                case 1:
-                    collection.firstInstance = val;
-                    break;
-                case 2:
-                    collection.secondInstance = val;
-                    break;
-                case 3:
-                    collection.thirdInstance = val;
-                    break;
-            }
-            collection.lastInstance = val;
-        }
-
-        function namedHandler(name){
-            var handler;
-            function handlerFN(propName){
-                this.propName = propName;
-                this.recordExecution = function(){};
-                this.recordExecution.displayName = name +'['+ propName+'].recordExecution';
-                this.execute = function(){};
-                this.execute.displayName = name +'['+ propName+'].execute';
-                sinon.stub(this,'recordExecution');
-                sinon.stub(this,'execute');
-
-                //this.execute = namedStub(name +'['+ propName+'].execute');
-                addInstance(handler,this);
-                if(!handler[propName]){
-                    handler[propName] = {};
-                }
-                addInstance(handler[propName],this);
-            }
-            handlerFN.displayName = name;
-            handler = sinon.spy(handlerFN);
-            handler.instances = [];
-
-            return handler;
-        }
 
         it('named handler utility method',function(){
 
@@ -458,8 +468,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(spies[1].secondCall).to.have.been.calledWith('prop2');
         });
 
-        it('pulling in other values besides the result/reason (i.e. stubs/spys/mocks, etc)');
-        it('expecting rejection of the previous step');
         it('passing a value to the next step');
         it('allowing current value to continue a value');
         it('And-able expectations - allow multiple expectations during same promise');

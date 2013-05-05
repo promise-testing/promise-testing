@@ -143,44 +143,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             deferred.resolve('hello');
         });
 
-
-        it('rejection passes regex',function(){
-            /^(?:reject(?:ed|ion)?)$/.test('rejection');
-        });
-
-
-        it.skip('list props',function(){
-            var list = [];
-            var proto = chai.Assertion.prototype;
-
-            var target = {assert:function(){}};
-
-            Object.getOwnPropertyNames(proto).forEach(function (val){
-                var descriptor = Object.getOwnPropertyDescriptor(proto,val);
-                if(descriptor.configurable && descriptor.get){
-
-                    var type = 'Error Accessing';
-                    try {
-                        type = typeof descriptor.get.call(target);
-                    } catch(e){
-
-                    }
-                    console.log(val + ': ' + type);
-                }
-                if(!descriptor.configurable){
-                    console.log("NOT CONFIGURABLE: " + val);
-                }
-                else if (!descriptor.get){
-                    console.log("NO GETTER: " + val);
-                }
-            });
-        });
-
-        it.skip('proto support',function(){
-            var hasProtoSupport = '__proto__' in Object;
-            console.log('proto support: ' + hasProtoSupport);
-        });
-
     });
 
 });
