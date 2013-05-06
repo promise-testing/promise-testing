@@ -37,6 +37,19 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             promise = engine.wrap(deferred.promise);
         });
 
+
+        it('spies / etc can be passed to expect',function(done){
+            var obj = {message:'hello'};
+
+            promise
+                .then.expect(obj).to.have.property('message','hello')
+                .then(function(){obj.message='goodbye'})
+                .then.expect(obj).to.have.property('message','goodbye')
+                .then.notify(done);
+
+            deferred.resolve();
+        });
+
         it('equals should pass',function(done){
             promise.then.expect.result.to.equal('hello').then.notify(done);
             deferred.resolve('hello');

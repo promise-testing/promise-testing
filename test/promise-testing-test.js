@@ -463,6 +463,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             expect(spies[1].secondCall).to.have.been.calledWith('prop2');
         });
 
+
     });
 
 });

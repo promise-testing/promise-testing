@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','promise-testing','chai-as-promised'],
+define(['chai','sinon','sinon-chai','Q','chai-flavor','chai-as-promised'],
 function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
 
 
@@ -36,15 +36,17 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
         testFunc(nextTest);
     }
 
-    describe.skip('performance',function(){
+    describe('performance @slow',function(){
 
+        var engine;
         before(function(){
-
+            engine = new PromiseTester();
+            engine.scanChai();
         });
 
         function runPromiseEngineTest(done){
             var defer = q.defer();
-            engine.wrap(defer.promise).then.expect.equal('hello').then.notify(done);
+            engine.wrap(defer.promise).then.expect.result.to.equal('hello').then.notify(done);
             defer.resolve('hello');
         }
 
