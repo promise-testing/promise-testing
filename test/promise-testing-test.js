@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','Q','promise-testing'],
+define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
 function(chai,sinon,sinonChai,q,PromiseTester){
     chai.use(sinonChai);
     var expect = chai.expect,
@@ -32,6 +32,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 break;
         }
         collection.lastInstance = val;
+
     }
 
     function namedHandler(name,recordExecution,execute){

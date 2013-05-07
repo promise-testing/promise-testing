@@ -1,12 +1,11 @@
 if(!(typeof require === "function" && typeof exports === "object" && typeof module === "object")){
     var tests = Object.keys(window.__karma__.files).filter(function (file) {
         return  /^\/base\/test\/.*test\.js$/.test(file);
-        //return /promise-testing-example/.test(file);
     });
 
 
     requirejs.config({
-        // Karma serves files fr om '/base'
+        // Karma serves files from '/base'
         baseUrl: '/base/lib/',
 
         paths: {

@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','chai-flavor','chai-as-promised'],
+define(['chai','sinon','sinon-chai','Q','../lib/chai-flavor.js','chai-as-promised'],
 function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
 
 
@@ -10,7 +10,8 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
     chai.use(chaiAsPromised);
 
     var expect = chai.expect,
-        match = sinon.match;
+        match = sinon.match,
+        timing = {};
 
 
     function runTests(name,done,testFunc){
@@ -28,7 +29,8 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
             }
             else {
                 finish = Date.now();
-                console.log('time to complete ' + name + ':' + (finish-start));
+                timing[name] = finish - start;
+               // console.log('time to complete ' + name + ':' + (finish-start));
                 done();
             }
         }
@@ -66,6 +68,24 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiAsPromised){
             runTests('ChaiAsPromised',done,runChaiAsPromisedTest);
         });
 
+        after(function(){
+            var chaiTime = timing.ChaiAsPromised,
+                engineTime = timing.PromiseEngine,
+                least = Math.min(chaiTime,engineTime),
+                most = Math.max(chaiTime,engineTime),
+                leastName = chaiTime < engineTime ? 'ChaiAsPromised' : 'PromiseEngine',
+                mostName = chaiTime >= engineTime ? 'ChaiAsPromised' : 'PromiseEngine',
+                percentDiff = Math.round((most - least)/least * 100);
+
+
+            console.log(mostName + ' was ' + percentDiff + '% slower than '+ leastName + ' (' + most + 'ms vs. ' + least + 'ms).')
+
+
+
+
+
+
+        });
     });
 
 

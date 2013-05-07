@@ -12,10 +12,9 @@ files = [
     MOCHA_ADAPTER,
     REQUIRE,
     REQUIRE_ADAPTER,
+    'test-main-file.js',
     {pattern:'node_modules/**/*.js',included:false, watched:false},
     {pattern:'test/**/*test.js', included:false},
-    {pattern: 'promise-testing.js', included: false},
-    {pattern:'test-main-file.js', included:true },
     {pattern: 'lib/*.js', included: false}
 ];
 
@@ -32,7 +31,7 @@ preprocessors = {
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['dots','growl','coverage'];
+reporters = ['progress','growl','coverage'];
 
 coverageReporter = {
     type :'html',
@@ -68,7 +67,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome'];//, 'ChromeCanary', 'Firefox', 'Safari', 'Opera'];
+browsers = ['Chrome','ChromeCanary', 'Firefox', 'Safari', 'Opera'];
 
 
 // If browser does not capture in given timeout [ms], kill it

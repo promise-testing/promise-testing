@@ -5,3 +5,4 @@ jasmine-*.js
 jasmineAdapter-*.js
 npm-debug.log
 components
+libpeerconnection.log

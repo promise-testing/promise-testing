@@ -1,7 +1,7 @@
 //RequireJS && NodeJS Define Boilerplate
 ({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
 
-define(['chai','sinon','sinon-chai','Q','promise-testing','chai-flavor'],
+define(['chai','sinon','sinon-chai','Q','../lib/chai-flavor.js'],
 function(chai,sinon,sinonChai,q,PromiseTester){
     chai.use(sinonChai);
     var expect = chai.expect,

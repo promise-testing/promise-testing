@@ -2,7 +2,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','promise-testing'],
+define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
 function(chai,sinon,sinonChai,Q,PromiseTesting){
     'use strict';
 
