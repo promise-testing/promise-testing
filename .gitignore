@@ -1,6 +1,7 @@
 .idea/
 node_modules/
 coverage/
+build/
 jasmine-*.js
 jasmineAdapter-*.js
 npm-debug.log
