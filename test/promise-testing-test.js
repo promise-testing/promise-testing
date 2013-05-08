@@ -1,5 +1,6 @@
-//RequireJS && NodeJS Define Boilerplate
-({ define: typeof define === "function" ? define : function(A,F) { module.exports = F.apply(null, A.map(require)) } }).
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 
 define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
 function(chai,sinon,sinonChai,q,PromiseTester){
