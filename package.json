@@ -26,6 +26,7 @@
     "sinon-chai": "~2.4.0",
     "sinon": "~1.6.0",
     "amdefine": "0.0.4",
-    "growl": "~1.7.0"
+    "growl": "~1.7.0",
+    "chai-as-promised": "~3.3.1"
   }
 }

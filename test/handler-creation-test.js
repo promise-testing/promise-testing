@@ -2,8 +2,8 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
-function(chai,sinon,sinonChai,Q,PromiseTesting){
+define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js','../lib/promise-testing-utils.js'],
+function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
     'use strict';
 
     chai.use(sinonChai);
@@ -17,13 +17,14 @@ function(chai,sinon,sinonChai,Q,PromiseTesting){
 
     describe('addExecutableProperty',function(){
 
-        var constructor,execute,record,deferred = Q.defer() ;
+        var constructor,execute,record,deferred = Q.defer(),options ;
 
         beforeEach(function(){
             constructor = sinon.spy();
             execute = sinon.spy();
             record = sinon.spy();
             deferred = Q.defer();
+            options = {execute:execute,recordExecution:record,constructor:constructor}
         });
 
         function getInstance(index){
@@ -32,7 +33,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting){
         }
 
         it('will create a handler',function(){
-            engine.addExecutableProperty('prop1',constructor,record,execute);
+            engine.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello');
             expect(constructor).to.have.been.calledOnce;
             expect(getInstance().propName).to.equal('prop1');
@@ -40,7 +41,8 @@ function(chai,sinon,sinonChai,Q,PromiseTesting){
         });
 
         it('if recordExecution is null, execution will cause an error',function(){
-            engine.addExecutableProperty('prop1',constructor,null,execute);
+            options.recordExecution = null;
+            engine.addExecutableProperty('prop1',options);
             expect(function () {
                     engine.wrap(deferred.promise).then.prop1('hello');
                 }
@@ -48,20 +50,24 @@ function(chai,sinon,sinonChai,Q,PromiseTesting){
         });
 
         it('if recordExecution is true, execution arguments will be saved in.args',function(){
-            engine.addExecutableProperty('prop1',constructor,true,execute);
+
+            options.recordExecution = true;
+            engine.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello');
             expect(getInstance().args).to.eql(['hello']);
         });
 
         it('if recordExecution is array of strings, arguments will be mapped to properties',function(){
-            engine.addExecutableProperty('prop1',constructor,['arg1','arg2'],execute);
+            options.recordExecution = ['arg1','arg2'];
+            engine.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello','goodbye');
             expect(getInstance().arg1).to.eql('hello');
             expect(getInstance().arg2).to.eql('goodbye');
         });
 
         it('null constructor is acceptable',function(){
-            engine.addExecutableProperty('prop1',null,record,execute);
+            options.constructor = null;
+            engine.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello','goodbye');
 
             var instance = record.firstCall.thisValue;
