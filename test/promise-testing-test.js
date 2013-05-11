@@ -155,13 +155,13 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             });
 
             it('adding a "to" thenProperty will create a "to" sub property on promise.then',function(){
-                engine.addThenProperty('to',function(){});
+                engine.addProperty('to',function(){});
                 expect(promise.then).to.have.property('to');
             });
 
             it('accessing the "to" property will instantiate a new instance of the handler',function(){
                 var spy = sinon.spy();
-                engine.addThenProperty('to',spy);
+                engine.addProperty('to',spy);
                 expect(spy).not.to.have.been.called;
                 promise.then.to;
                 expect(spy).to.have.been.calledOnce;
@@ -174,7 +174,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 this.recordExecution = function(){};
                 sinon.spy(this,'recordExecution');
             });
-            engine.addThenProperty('to',constructor);
+            engine.addProperty('to',constructor);
             promise.then.to('hello');
             expect(constructor).to.have.been.calledOnce;
             var instance = constructor.firstCall.thisValue;
@@ -205,8 +205,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             var constructor1 = namedSpy('constructor1');
             var constructor2 = namedSpy('constructor2');
 
-            engine.addThenProperty('do',constructor1);
-            engine.addThenProperty('stuff',constructor2);
+            engine.addProperty('do',constructor1);
+            engine.addProperty('stuff',constructor2);
 
             promise.then.do.stuff.do;
 
@@ -222,9 +222,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
         it('handlers will be instantiated with propName',function(){
 
-            engine.addThenProperty('prop1',handler1);
-            engine.addThenProperty('prop2',handler2);
-            engine.addThenProperty('prop3',handler1);
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+            engine.addProperty('prop3',handler1);
 
             promise.then.prop1.prop2.prop3.prop1;
 
@@ -237,9 +237,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('record execution will be called with mirrored values, and in order', function(){
-            engine.addThenProperty('prop1',handler1);
-            engine.addThenProperty('prop2',handler2);
-            engine.addThenProperty('prop3',handler1);
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+            engine.addProperty('prop3',handler1);
 
             promise.then.prop1('Good').prop2('Night').prop3('Good').prop1('Luck');
 
@@ -260,12 +260,12 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
 
         it('fulfilling a promise will call "execute" on each handler', function(){
-            engine.addThenProperty('result',function(){
+            engine.addProperty('result',function(){
                 this.execute=function(nl,next,ctx){next(ctx.result);};
             });
-            engine.addThenProperty('prop1',handler1);
-            engine.addThenProperty('prop2',handler2);
-            engine.addThenProperty('prop3',handler1);
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler2);
+            engine.addProperty('prop3',handler1);
 
 
             promise.then.result.prop1.prop2.prop3;
@@ -283,7 +283,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
         it('a handler with unimplemented recordExecution will give a meaningful error if execution is attempted',
             function(){
-                engine.addThenProperty('myProp',function(){});
+                engine.addProperty('myProp',function(){});
                 expect(function(){promise.then.myProp}).not.to.throw();
                 expect(function(){promise.then.myProp()}).to.throw(/myProp/i);
             }
@@ -294,8 +294,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             function myHandler(propName){
                 instances.push(this);
             }
-            engine.addThenProperty('prop1',myHandler);
-            engine.addThenProperty('prop2',myHandler);
+            engine.addProperty('prop1',myHandler);
+            engine.addProperty('prop2',myHandler);
 
             promise.then.prop1.prop2;
 
@@ -308,15 +308,15 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             function myHandler(propName){
                 this.propName = "NOT THE RIGHT PROP";
             }
-            engine.addThenProperty('prop1',myHandler);
+            engine.addProperty('prop1',myHandler);
 
             expect(function(){promise.then.prop1}).to.throw(/NOT THE RIGHT PROP/i);
         });
 
         it('each handler will be passed the same execution context',function(){
-            engine.addThenProperty('prop1',handler1);
-            engine.addThenProperty('prop2',handler1);
-            engine.addThenProperty('prop3',handler1);
+            engine.addProperty('prop1',handler1);
+            engine.addProperty('prop2',handler1);
+            engine.addProperty('prop3',handler1);
 
             promise.then.prop1.prop2.prop3;
 
@@ -333,7 +333,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('rejection will make reason available on ctx',function(){
-            engine.addThenProperty('prop1',handler1);
+            engine.addProperty('prop1',handler1);
             promise.then.prop1;
             deferreds[0].reject('blah');
             expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');

@@ -15,7 +15,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
         engine = new PromiseTesting();
     });
 
-    describe('addExecutableProperty',function(){
+    describe('addProperty',function(){
 
         var constructor,execute,record,deferred = Q.defer(),options ;
 
@@ -42,7 +42,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
 
         it('if recordExecution is null, execution will cause an error',function(){
             options.recordExecution = null;
-            engine.addExecutableProperty('prop1',options);
+            engine.addProperty('prop1',utils.buildHandler(options));
             expect(function () {
                     engine.wrap(deferred.promise).then.prop1('hello');
                 }

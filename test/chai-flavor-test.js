@@ -30,7 +30,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         before(function(){
             engine = new PromiseTester();
             engine.scanChai();
-            engine.addThenProperty('shouldFail',ShouldFail);
+            engine.addProperty('shouldFail',ShouldFail);
         });
 
         beforeEach(function(){
