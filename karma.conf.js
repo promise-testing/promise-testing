@@ -13,9 +13,14 @@ files = [
     REQUIRE,
     REQUIRE_ADAPTER,
     'test-main-file.js',
-    {pattern:'node_modules/**/*.js',included:false, watched:false},
+    {pattern:'node_modules/chai/chai.js',included:false, watched:false},
+    {pattern:'node_modules/chai-as-promised/lib/chai-as-promised.js',included:false, watched:false},
+    {pattern:'node_modules/q/q.js',included:false, watched:false},
+    {pattern:'node_modules/sinon/pkg/sinon.js',included:false, watched:false},
+    {pattern:'node_modules/chai-as-promised/lib/chai-as-promised.js',included:false, watched:false},
+    {pattern:'node_modules/sinon-chai/lib/sinon-chai.js',included:false, watched:false},
     {pattern:'test/**/*test.js', included:false},
-    {pattern: 'lib/*.js', included: false}
+    {pattern: 'lib/**/*.js', included: false}
 ];
 
 
@@ -31,7 +36,7 @@ preprocessors = {
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['progress','growl','coverage'];
+reporters = ['dots','growl','coverage'];
 
 coverageReporter = {
     type :'html',
@@ -68,7 +73,6 @@ autoWatch = true;
 // - PhantomJS
 // - IE (only Windows)
 browsers = ['Chrome','ChromeCanary', 'Firefox', 'Safari', 'Opera'];
-
 
 // If browser does not capture in given timeout [ms], kill it
 captureTimeout = 60000;
