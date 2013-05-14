@@ -2,7 +2,7 @@
   "name": "promise-testing",
   "version": "0.0.0",
   "description": "a utility for testing promise code",
-  "main": "lib/main.js",
+  "main": "lib/promise-testing.js",
   "scripts": {
     "test": "mocha --check-leaks -c -R spec"
   },
