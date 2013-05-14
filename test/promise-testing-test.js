@@ -111,11 +111,13 @@ function(chai,sinon,sinonChai,q,PromiseTester){
     }
 
     describe('promise-testing',function(){
-        var deferreds,promise,engine,promises,handler1,handler2, createDeferred,createRealDeferred;
+        var deferreds,promise,engine,promises,handler1,handler2, createDeferred,createRealDeferred
+            , properties, utils;
         beforeEach(function(){
             deferreds = [];
             promises = [];
             engine = new PromiseTester();
+            engine.use(function(p,u){properties = p, utils = u;});
             handler1 = namedHandler('handler1');
             handler2 = namedHandler('handler2');
             createDeferred = function(){return new SpyDeferred();};
@@ -155,13 +157,13 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             });
 
             it('adding a "to" thenProperty will create a "to" sub property on promise.then',function(){
-                engine.addProperty('to',function(){});
+                properties.addProperty('to',function(){});
                 expect(promise.then).to.have.property('to');
             });
 
             it('accessing the "to" property will instantiate a new instance of the handler',function(){
                 var spy = sinon.spy();
-                engine.addProperty('to',spy);
+                properties.addProperty('to',spy);
                 expect(spy).not.to.have.been.called;
                 promise.then.to;
                 expect(spy).to.have.been.calledOnce;
@@ -174,7 +176,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 this.recordExecution = function(){};
                 sinon.spy(this,'recordExecution');
             });
-            engine.addProperty('to',constructor);
+            properties.addProperty('to',constructor);
             promise.then.to('hello');
             expect(constructor).to.have.been.calledOnce;
             var instance = constructor.firstCall.thisValue;
@@ -205,8 +207,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             var constructor1 = namedSpy('constructor1');
             var constructor2 = namedSpy('constructor2');
 
-            engine.addProperty('do',constructor1);
-            engine.addProperty('stuff',constructor2);
+            properties.addProperty('do',constructor1);
+            properties.addProperty('stuff',constructor2);
 
             promise.then.do.stuff.do;
 
@@ -222,9 +224,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
         it('handlers will be instantiated with propName',function(){
 
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
-            engine.addProperty('prop3',handler1);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
+            properties.addProperty('prop3',handler1);
 
             promise.then.prop1.prop2.prop3.prop1;
 
@@ -237,9 +239,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('record execution will be called with mirrored values, and in order', function(){
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
-            engine.addProperty('prop3',handler1);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
+            properties.addProperty('prop3',handler1);
 
             promise.then.prop1('Good').prop2('Night').prop3('Good').prop1('Luck');
 
@@ -260,12 +262,12 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
 
         it('fulfilling a promise will call "execute" on each handler', function(){
-            engine.addProperty('result',function(){
+            properties.addProperty('result',function(){
                 this.execute=function(nl,next,ctx){next(ctx.result);};
             });
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
-            engine.addProperty('prop3',handler1);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
+            properties.addProperty('prop3',handler1);
 
 
             promise.then.result.prop1.prop2.prop3;
@@ -283,7 +285,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
         it('a handler with unimplemented recordExecution will give a meaningful error if execution is attempted',
             function(){
-                engine.addProperty('myProp',function(){});
+                properties.addProperty('myProp',function(){});
                 expect(function(){promise.then.myProp}).not.to.throw();
                 expect(function(){promise.then.myProp()}).to.throw(/myProp/i);
             }
@@ -294,8 +296,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             function myHandler(propName){
                 instances.push(this);
             }
-            engine.addProperty('prop1',myHandler);
-            engine.addProperty('prop2',myHandler);
+            properties.addProperty('prop1',myHandler);
+            properties.addProperty('prop2',myHandler);
 
             promise.then.prop1.prop2;
 
@@ -308,15 +310,15 @@ function(chai,sinon,sinonChai,q,PromiseTester){
             function myHandler(propName){
                 this.propName = "NOT THE RIGHT PROP";
             }
-            engine.addProperty('prop1',myHandler);
+            properties.addProperty('prop1',myHandler);
 
             expect(function(){promise.then.prop1}).to.throw(/NOT THE RIGHT PROP/i);
         });
 
         it('each handler will be passed the same execution context',function(){
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler1);
-            engine.addProperty('prop3',handler1);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler1);
+            properties.addProperty('prop3',handler1);
 
             promise.then.prop1.prop2.prop3;
 
@@ -333,26 +335,26 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('rejection will make reason available on ctx',function(){
-            engine.addProperty('prop1',handler1);
+            properties.addProperty('prop1',handler1);
             promise.then.prop1;
             deferreds[0].reject('blah');
             expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');
         });
 
         it('has property returns false if that property isnt defined yet',function(){
-            expect(engine.hasProperty('myProp')).to.equal(false);
+            expect(properties.hasProperty('myProp')).to.equal(false);
         });
 
         it('has property returns true if that property is already defined',function(){
-            engine.addProperty('myProp',handler1);
-            expect(engine.hasProperty('myProp')).to.equal(true);
+            properties.addProperty('myProp',handler1);
+            expect(properties.hasProperty('myProp')).to.equal(true);
         });
 
         it('handlers can find out what properties are called after them',function(){
 
             var spies = [];
 
-            engine.addProperty('check',function TailHandler(propName,tools){
+            properties.addProperty('check',function TailHandler(propName,tools){
                     var spy = sinon.spy();
                     spies.push(spy);
                     tools.addPropertyListener(spy);
@@ -360,8 +362,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 }
             );
 
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
 
             promise.then.check.prop1;
 
@@ -381,7 +383,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
             var spies = [];
 
-            engine.addProperty('check',function TailHandler(propName,tools){
+            properties.addProperty('check',function TailHandler(propName,tools){
                     var spy = sinon.spy();
                     spies.push(spy);
                     tools.addPropertyListener(spy);
@@ -389,8 +391,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 }
             );
 
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
 
             promise.then.check.prop1.prop1.then.prop2.prop2;
 
@@ -400,15 +402,15 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
         it('adding an existing property will throw an error',function(){
-            engine.addProperty('prop1',handler1);
-            expect(function(){engine.addProperty('prop1',handler1)}).to.throw();
+            properties.addProperty('prop1',handler1);
+            expect(function(){properties.addProperty('prop1',handler1)}).to.throw();
         });
 
         it('addPropertyListener returns a callback which removes the listener',function(){
 
             var spies = [];
 
-            engine.addProperty('check',
+            properties.addProperty('check',
                 function TailHandler(propName,tools){
                     var remove, spy = sinon.spy(function(propName){
                         if(propName === 'prop2'){
@@ -421,8 +423,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 }
             );
 
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
 
             promise.then.check.prop1.prop2.prop1;
             expect(spies).to.have.length(1);
@@ -435,13 +437,13 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
             var spies = [];
 
-            engine.addProperty('noremove',function(propName,tools){
+            properties.addProperty('noremove',function(propName,tools){
                 var listener = sinon.spy();
                 spies.push(listener);
                 tools.addPropertyListener(listener);
             });
 
-            engine.addProperty('check',
+            properties.addProperty('check',
                 function TailHandler(propName,tools){
                     var remove, spy = sinon.spy(function(propName){
                         if(propName === 'prop2'){
@@ -454,8 +456,8 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                 }
             );
 
-            engine.addProperty('prop1',handler1);
-            engine.addProperty('prop2',handler2);
+            properties.addProperty('prop1',handler1);
+            properties.addProperty('prop2',handler2);
 
             promise.then.noremove.check.prop1.prop2.prop1;
             expect(spies).to.have.length(2);
@@ -467,5 +469,6 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
 
     });
+
 
 });

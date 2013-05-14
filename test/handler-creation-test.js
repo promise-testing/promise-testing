@@ -2,17 +2,19 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module);
 }
 
-define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js','../lib/promise-testing-utils.js'],
+define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
 function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
     'use strict';
 
     chai.use(sinonChai);
     var expect = chai.expect,
         match = sinon.match,
-        engine;
-
+        engine,
+        properties,
+        utils;
     beforeEach(function(){
         engine = new PromiseTesting();
+        engine.use(function(p,u){properties = p; utils = u;});
     });
 
     describe('addProperty',function(){
@@ -33,7 +35,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
         }
 
         it('will create a handler',function(){
-            engine.addProperty('prop1',utils.buildHandler(options));
+            properties.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello');
             expect(constructor).to.have.been.calledOnce;
             expect(getInstance().propName).to.equal('prop1');
@@ -42,7 +44,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
 
         it('if recordExecution is null, execution will cause an error',function(){
             options.recordExecution = null;
-            engine.addProperty('prop1',utils.buildHandler(options));
+            properties.addProperty('prop1',utils.buildHandler(options));
             expect(function () {
                     engine.wrap(deferred.promise).then.prop1('hello');
                 }
@@ -52,14 +54,14 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
         it('if recordExecution is true, execution arguments will be saved in.args',function(){
 
             options.recordExecution = true;
-            engine.addProperty('prop1',utils.buildHandler(options));
+            properties.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello');
             expect(getInstance().args).to.eql(['hello']);
         });
 
         it('if recordExecution is array of strings, arguments will be mapped to properties',function(){
             options.recordExecution = ['arg1','arg2'];
-            engine.addProperty('prop1',utils.buildHandler(options));
+            properties.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello','goodbye');
             expect(getInstance().arg1).to.eql('hello');
             expect(getInstance().arg2).to.eql('goodbye');
@@ -67,7 +69,7 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
 
         it('null constructor is acceptable',function(){
             options.constructor = null;
-            engine.addProperty('prop1',utils.buildHandler(options));
+            properties.addProperty('prop1',utils.buildHandler(options));
             engine.wrap(deferred.promise).then.prop1('hello','goodbye');
 
             var instance = record.firstCall.thisValue;
