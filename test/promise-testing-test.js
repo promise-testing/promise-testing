@@ -337,6 +337,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         it('rejection will make reason available on ctx',function(){
             properties.addProperty('prop1',handler1);
             promise.then.prop1;
+            expect(handler1.firstInstance.playback.callsArg(1));
             deferreds[0].reject('blah');
             expect(handler1.firstInstance.playback.firstCall.args[2]).to.have.property('reason','blah');
         });
@@ -361,6 +362,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                     this.playback = function(){};
                 }
             );
+
 
             properties.addProperty('prop1',handler1);
             properties.addProperty('prop2',handler2);
