@@ -18,7 +18,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
         ShouldFail.prototype.recordExecution = function(done){
             this.done = done;
         };
-        ShouldFail.prototype.execute = function(lastResult,next,ctx){
+        ShouldFail.prototype.playback = function(lastResult,next,ctx){
             if(ctx.reason){
                 this.done();
             }

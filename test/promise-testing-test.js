@@ -36,18 +36,18 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
     }
 
-    function namedHandler(name,recordExecution,execute){
+    function namedHandler(name,recordExecution,playback){
         var handler;
         function handlerFN(propName){
             this.propName = propName;
             this.recordExecution = recordExecution || function(){};
             this.recordExecution.displayName = name +'['+ propName+'].recordExecution';
-            this.execute = execute || function(){};
-            this.execute.displayName = name +'['+ propName+'].execute';
+            this.playback = playback || function(){};
+            this.playback.displayName = name +'['+ propName+'].playback';
             sinon.stub(this,'recordExecution');
-            sinon.stub(this,'execute');
+            sinon.stub(this,'playback');
 
-            //this.execute = namedStub(name +'['+ propName+'].execute');
+            //this.playback = namedStub(name +'['+ propName+'].playback');
             addInstance(handler,this);
             if(!handler[propName]){
                 handler[propName] = {};
@@ -261,9 +261,9 @@ function(chai,sinon,sinonChai,q,PromiseTester){
         });
 
 
-        it('fulfilling a promise will call "execute" on each handler', function(){
+        it('fulfilling a promise will call "playback" on each handler', function(){
             properties.addProperty('result',function(){
-                this.execute=function(nl,next,ctx){next(ctx.result);};
+                this.playback=function(nl,next,ctx){next(ctx.result);};
             });
             properties.addProperty('prop1',handler1);
             properties.addProperty('prop2',handler2);
@@ -272,14 +272,14 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
             promise.then.result.prop1.prop2.prop3;
 
-            handler1.firstInstance.execute.callsArgWith(1,'goodbye');
-            handler2.firstInstance.execute.callsArgWith(1,'adios');
-            handler1.secondInstance.execute.callsArgWith(1,'sionara');
+            handler1.firstInstance.playback.callsArgWith(1,'goodbye');
+            handler2.firstInstance.playback.callsArgWith(1,'adios');
+            handler1.secondInstance.playback.callsArgWith(1,'sionara');
             deferreds[0].resolve('hello');
 
-            expect(handler1.firstInstance.execute).to.have.been.calledWith('hello');
-            expect(handler2.firstInstance.execute).to.have.been.calledWith('goodbye');
-            expect(handler1.secondInstance.execute).to.have.been.calledWith('adios');
+            expect(handler1.firstInstance.playback).to.have.been.calledWith('hello');
+            expect(handler2.firstInstance.playback).to.have.been.calledWith('goodbye');
+            expect(handler1.secondInstance.playback).to.have.been.calledWith('adios');
         });
 
 
@@ -322,23 +322,23 @@ function(chai,sinon,sinonChai,q,PromiseTester){
 
             promise.then.prop1.prop2.prop3;
 
-            handler1.firstInstance.execute.callsArgWith(1,'goodbye');
-            handler1.secondInstance.execute.callsArgWith(1,'adios');
-            handler1.thirdInstance.execute.callsArgWith(1,'sionara');
+            handler1.firstInstance.playback.callsArgWith(1,'goodbye');
+            handler1.secondInstance.playback.callsArgWith(1,'adios');
+            handler1.thirdInstance.playback.callsArgWith(1,'sionara');
 
             deferreds[0].resolve('hello');
 
 
-            var ctx = handler1.firstInstance.execute.firstCall.args[2];
-            expect(handler1.secondInstance.execute.firstCall.args[2]).to.equal(ctx);
-            expect(handler1.thirdInstance.execute.firstCall.args[2]).to.equal(ctx);
+            var ctx = handler1.firstInstance.playback.firstCall.args[2];
+            expect(handler1.secondInstance.playback.firstCall.args[2]).to.equal(ctx);
+            expect(handler1.thirdInstance.playback.firstCall.args[2]).to.equal(ctx);
         });
 
         it('rejection will make reason available on ctx',function(){
             properties.addProperty('prop1',handler1);
             promise.then.prop1;
             deferreds[0].reject('blah');
-            expect(handler1.firstInstance.execute.firstCall.args[2]).to.have.property('reason','blah');
+            expect(handler1.firstInstance.playback.firstCall.args[2]).to.have.property('reason','blah');
         });
 
         it('has property returns false if that property isnt defined yet',function(){
@@ -358,7 +358,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                     var spy = sinon.spy();
                     spies.push(spy);
                     tools.addPropertyListener(spy);
-                    this.execute = function(){};
+                    this.playback = function(){};
                 }
             );
 
@@ -387,7 +387,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                     var spy = sinon.spy();
                     spies.push(spy);
                     tools.addPropertyListener(spy);
-                    this.execute = function(){};
+                    this.playback = function(){};
                 }
             );
 
@@ -419,7 +419,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                     });
                     spies.push(spy);
                     remove = tools.addPropertyListener(spy);
-                    this.execute = function(){};
+                    this.playback = function(){};
                 }
             );
 
@@ -452,7 +452,7 @@ function(chai,sinon,sinonChai,q,PromiseTester){
                     });
                     spies.push(spy);
                     remove = tools.addPropertyListener(spy);
-                    this.execute = function(){};
+                    this.playback = function(){};
                 }
             );
 

@@ -19,14 +19,14 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
 
     describe('addProperty',function(){
 
-        var constructor,execute,record,deferred = Q.defer(),options ;
+        var constructor,playback,record,deferred = Q.defer(),options ;
 
         beforeEach(function(){
             constructor = sinon.spy();
-            execute = sinon.spy();
+            playback = sinon.spy();
             record = sinon.spy();
             deferred = Q.defer();
-            options = {execute:execute,recordExecution:record,constructor:constructor}
+            options = {playback:playback,recordExecution:record,constructor:constructor}
         });
 
         function getInstance(index){
