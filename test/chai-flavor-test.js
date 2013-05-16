@@ -25,6 +25,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
             else {
                 this.done(Error('There Should have been a failure!'));
             }
+            next(null);
         };
 
         before(function(){
