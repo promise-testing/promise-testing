@@ -1,3 +1,4 @@
+build: test
 
 node_modules: package.json
 	@npm install

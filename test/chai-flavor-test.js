@@ -8,33 +8,28 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
     var expect = chai.expect,
         match = sinon.match;
 
+    function ShouldFail(){
+    }
+    ShouldFail.prototype.recordExecution = function(done){
+        this.done = done;
+    };
+    ShouldFail.prototype.playback = function(lastResult,next,ctx){
+        if(ctx.reason){
+            this.done();
+        }
+        else {
+            this.done(Error('There Should have been a failure!'));
+        }
+        next(null);
+    };
+
+    var engine = new PromiseTester;
+    engine.use(chaiFlavor(chai));
+    engine.use(function(properties){properties.addProperty('shouldFail',ShouldFail)});
 
     describe('chai-flavor',function(){
-        var engine,deferred,promise;
+        var deferred,promise;
 
-
-        function ShouldFail(){
-        }
-        ShouldFail.prototype.recordExecution = function(done){
-            this.done = done;
-        };
-        ShouldFail.prototype.playback = function(lastResult,next,ctx){
-            if(ctx.reason){
-                this.done();
-            }
-            else {
-                this.done(Error('There Should have been a failure!'));
-            }
-            next(null);
-        };
-
-        before(function(){
-            engine = new PromiseTester();
-            engine.use(chaiFlavor);
-            engine.use(function(properties,handlers){
-                properties.addProperty('shouldFail',ShouldFail);
-            });
-        });
 
         beforeEach(function(){
             deferred = q.defer();
