@@ -32,8 +32,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
             engine = new PromiseTester();
             engine.use(chaiFlavor);
             engine.use(function(properties,handlers){
-
-            properties.addProperty('shouldFail',ShouldFail);
+                properties.addProperty('shouldFail',ShouldFail);
             });
         });
 
@@ -150,7 +149,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
             deferred.resolve("goodbye");
         });
 
-        it('using it with spies',function(done){
+        it('using it with custom chained methods',function(done){
             var spy = sinon.spy();
 
             promise
@@ -161,6 +160,42 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor){
             deferred.resolve('hello');
         });
 
-    });
 
+        it('using it with custom chained methods - failing test',function(done){
+            var spy = sinon.spy();
+
+            promise
+                .then(function(result){spy(result);})
+                .then.expect(spy).to.have.been.calledWith('hello')
+                .then.shouldFail(done);
+
+            deferred.resolve('goodbye');
+        });
+
+        it('using it with custom chained properties',function(done){
+            var spy = sinon.spy();
+
+            promise
+                .then(function(result){spy(result);})
+                .then.expect(spy).to.have.been.calledOnce
+                .then.notify(done);
+
+            deferred.resolve('hello');
+        });
+
+
+        it('using it with custom chained methods - failing test',function(done){
+            var spy = sinon.spy();
+
+            promise
+                .then(function(result){spy(result);})
+                .then.expect(spy).to.have.been.calledTwice
+                .then.shouldFail(done);
+
+            deferred.resolve('goodbye');
+        });
+
+
+
+    });
 });

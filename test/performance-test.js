@@ -38,7 +38,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor,chaiAsPromised){
         testFunc(nextTest);
     }
 
-    describe('performance @slow',function(){
+    describe('performance @slow @performance',function(){
 
         var engine;
         before(function(){

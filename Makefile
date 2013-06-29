@@ -16,9 +16,12 @@ clean-all: clean
 	@rm -rf node_modules
 	
 test: node_modules
-	@mocha --reporter spec
+	@mocha --reporter spec --grep @performance --invert
 	
 test-fast: node_modules
 	@mocha --reporter spec --grep @slow --invert
+
+test-performance: node_modules
+	@mocha --reporter spec --grep @performance
 
 .PHONY: clean clean-all test test-fast
