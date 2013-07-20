@@ -19,6 +19,12 @@ clean-all: clean
 	@rm -rf node_modules
 	@rm -rf components
 	
+git-clean-show:
+	git clean -n -d -x -e .idea/
+
+git-clean:
+	git clean -f -d -x -e .idea/
+	
 test: node_modules
 	@mocha --reporter spec --grep @performance --invert
 	
@@ -31,4 +37,4 @@ test-performance: node_modules
 test-browser: build/test-build.js
 	@karma start
 
-.PHONY: clean clean-all test test-fast default_build
+.PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser default_build
