@@ -1,10 +1,10 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-
-define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js','../lib/chai-flavor.js','chai-as-promised'],
-function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor,chaiAsPromised){
-
+    var chai = require('chai');
+    var sinon = require('sinon');
+    var sinonChai = require('sinon-chai');
+    var q = require('q');
+    var PromiseTester = require('../lib/promise-testing.js');
+    var chaiFlavor = require('../lib/chai-flavor.js');
+    var chaiAsPromised = require('chai-as-promised');
 
     chai.use(sinonChai);
     chai.use(chaiAsPromised);
@@ -43,7 +43,7 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor,chaiAsPromised){
         var engine;
         before(function(){
             engine = new PromiseTester();
-            engine.use(chaiFlavor);
+            engine.use(chaiFlavor(chai));
         });
 
         function runPromiseEngineTest(done){
@@ -86,7 +86,6 @@ function(chai,sinon,sinonChai,q,PromiseTester,chaiFlavor,chaiAsPromised){
 
 
         });
-    });
 
 
 });

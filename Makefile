@@ -1,13 +1,15 @@
-build: test
+default_build: test
 
 node_modules: package.json
 	@npm install
 
-promise-testing.js: node_modules lib/*
-	@./node_modules/.bin/r.js -o app.build.js
+components: component.json
+	echo "installing components"
+	@component install --dev
 
-promise-testing.min.js: node_modules lib/*
-	@./node_modules/.bin/r.js -o app.build.js optimize=uglify2
+build/test-build.js: components lib/*
+	echo "Creating test-build"
+	@component test-build
 
 clean:
 	@rm -rf build
@@ -15,6 +17,7 @@ clean:
 
 clean-all: clean
 	@rm -rf node_modules
+	@rm -rf components
 	
 test: node_modules
 	@mocha --reporter spec --grep @performance --invert
@@ -24,5 +27,8 @@ test-fast: node_modules
 
 test-performance: node_modules
 	@mocha --reporter spec --grep @performance
+	
+test-browser: build/test-build.js
+	@karma start
 
-.PHONY: clean clean-all test test-fast
+.PHONY: clean clean-all test test-fast default_build

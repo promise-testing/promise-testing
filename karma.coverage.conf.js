@@ -21,12 +21,7 @@ preprocessors = {
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['dots','growl','coverage'];
-
-coverageReporter = {
-    type :'html',
-    dir :'coverage/'
-};
+reporters = ['dots','growl'];
 
 // web server port
 port = 9876;

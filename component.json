@@ -1,0 +1,39 @@
+{
+  "name": "promise-testing",
+  "repo": "promise-testing/core",
+  "version": "0.0.0",
+  "description": "Promise Testing Utility",
+  "license": "MIT",
+  "keywords": [
+    "test",
+    "promise",
+    "testing",
+    "promises",
+    "chai"
+  ],
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "lib/chai-flavor.js",
+    "lib/context.js",
+    "lib/handler-utils.js",
+    "lib/promise-testing.js",
+    "lib/properties.js",
+    "lib/property-listeners.js"
+  ],
+  "testScripts": [
+    "test/chai-flavor-test.js",
+    "test/context-test.js",
+    "test/handler-creation-test.js",
+    "test/is-wrapped-test.js",
+    "test/promise-testing-test.js",
+    "test/performance-test.js"
+  ],
+  "development": {
+    "microjs/q": "*",
+    "jamestalmage/sinon": "*",
+    "chaijs/chai": "*",
+    "jamestalmage/sinon-chai": "*",
+    "jamestalmage/chai-as-promised": "*"
+  }
+}

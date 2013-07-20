@@ -1,10 +1,9 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
 
-define(['chai','sinon','sinon-chai','Q','../lib/promise-testing.js'],
-function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
-    'use strict';
+    var chai = require('chai');
+    var sinon = require('sinon');
+    var sinonChai = require('sinon-chai');
+    var Q = require('q');
+    var PromiseTesting = require('../lib/promise-testing.js');
 
     chai.use(sinonChai);
     var expect = chai.expect,
@@ -80,5 +79,3 @@ function(chai,sinon,sinonChai,Q,PromiseTesting,utils){
     });
 
 
-
-});

@@ -1,11 +1,9 @@
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
 
-define(['chai','sinon','sinon-chai','../lib/context.js'],
-function(chai,sinon,sinonChai,Context){
-    'use strict';
-    
+    var chai = require('chai');
+    var sinon = require('sinon');
+    var sinonChai = require('sinon-chai');
+    var Context = require('../lib/context.js');
+
     chai.use(sinonChai);
     var expect = chai.expect,
         match = sinon.match;
@@ -155,5 +153,4 @@ function(chai,sinon,sinonChai,Context){
     
     
     
-});
-    
+
