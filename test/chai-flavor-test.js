@@ -1,11 +1,12 @@
-
 var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 var q = require('q');
 var PromiseTester = require('../lib/promise-testing.js');
 var chaiFlavor = require('../lib/chai-flavor.js');
+
 chai.use(sinonChai);
+
 var expect = chai.expect,
     match = sinon.match;
 
@@ -31,12 +32,10 @@ engine.use(function(properties){properties.addProperty('shouldFail',ShouldFail)}
 describe('chai-flavor',function(){
     var deferred,promise;
 
-
     beforeEach(function(){
         deferred = q.defer();
         promise = engine.wrap(deferred.promise);
     });
-
 
     it('spies / etc can be passed to expect',function(done){
         var obj = {message:'hello'};
@@ -64,7 +63,6 @@ describe('chai-flavor',function(){
         promise.then.expect.rejection.to.equal('goodbye').then.notify(done);
         deferred.reject('goodbye');
     });
-
 
     it('rejection equals should fail',function(done){
         promise.then.expect.rejection.to.equal('goodbye').then.shouldFail(done);
@@ -156,7 +154,6 @@ describe('chai-flavor',function(){
         deferred.resolve('hello');
     });
 
-
     it('using it with custom chained methods - failing test',function(done){
         var spy = sinon.spy();
 
@@ -179,7 +176,6 @@ describe('chai-flavor',function(){
         deferred.resolve('hello');
     });
 
-
     it('using it with custom chained methods - failing test',function(done){
         var spy = sinon.spy();
 
@@ -190,7 +186,5 @@ describe('chai-flavor',function(){
 
         deferred.resolve('goodbye');
     });
-
-
 
 });
