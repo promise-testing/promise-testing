@@ -11,17 +11,18 @@ basePath = '';
 files = [
     MOCHA,
     MOCHA_ADAPTER,
-    'build/test-build.js',
-    'build/test-loader.js'
+    'build/test-build-coverage.js',
+    'build/test-loader-coverage.js'
 ];
-
-preprocessors = {
-    'build/test-build.js':'coverage'
-};
 
 // test results reporter to use
 // possible values: 'dots', 'progress', 'junit'
-reporters = ['dots','growl'];
+reporters = ['dots','growl','coverage'];
+
+coverageReporter = {
+  type : 'html',
+  dir : 'coverage/'
+}
 
 // web server port
 port = 9876;
