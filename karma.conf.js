@@ -13,19 +13,31 @@ module.exports = function(config){
     // list of files / patterns to load in the browser
 
     var coverage = process.env.PROMISE_TESTING_COV;
+    var when = process.env.USE_WHEN_PROMISES;
+
+    var files = [];
+
+    if(when){
+        files.push('when-environment.js');
+    }
+
 
     if(coverage){
-        config.files = [
+        files = files.concat([
             'build/test-build-coverage.js',
             'build/test-loader-coverage.js'
-        ];
+        ]);
     }
     else {
-        config.files = [
+        files = files.concat([
             'build/test-build.js',
             'build/test-loader.js'
-        ];
+        ]);
     }
+
+    console.log(files);
+
+    config.files = files;
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit'
@@ -53,7 +65,7 @@ module.exports = function(config){
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    config.logLevel = config.LOG_INFO;
+    config.logLevel = config.LOG_DEBUG;
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -76,7 +88,7 @@ module.exports = function(config){
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    config.singleRun = true;
+    config.singleRun = false;
 
 
     //config_object.set(config);

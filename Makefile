@@ -49,6 +49,11 @@ test-browser: build/test-build.js
 	@echo "Testing In Browsers"
 	@./node_modules/.bin/karma start
 
+test-browser-when: build/test-build.js
+	@echo "Testing In Browsers (USING WHEN PROMISES)"
+	@USE_WHEN_PROMISES=1 ./node_modules/.bin/karma start
+
+
 test-browser-coverage: coverage-stage/build/test-build.js
 	@echo "Testing In Browers (WITH COVERAGE)"
 	@PROMISE_TESTING_COV=1 ./node_modules/.bin/karma start
