@@ -1,5 +1,11 @@
 REPORTER=dot
 
+ifeq ($(WATCH),true)
+	KARMA_RUN_FLAG=--no-single-run
+else
+	KARMA_RUN_FLAG=--single-run
+endif
+
 default_build: test test-when
 
 node_modules: package.json
@@ -47,16 +53,16 @@ test-performance: node_modules
 	
 test-browser: build/test-build.js
 	@echo "Testing In Browsers"
-	@./node_modules/.bin/karma start
+	@./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
 test-browser-when: build/test-build.js
 	@echo "Testing In Browsers (USING WHEN PROMISES)"
-	@USE_WHEN_PROMISES=1 ./node_modules/.bin/karma start
+	@USE_WHEN_PROMISES=1 ./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
 
 test-browser-coverage: coverage-stage/build/test-build.js
 	@echo "Testing In Browers (WITH COVERAGE)"
-	@PROMISE_TESTING_COV=1 ./node_modules/.bin/karma start
+	@PROMISE_TESTING_COV=1 ./node_modules/.bin/karma start --single-run
 	
 lib-cov: lib/*
 	@echo "Instrumenting source for code coverage."
