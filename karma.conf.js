@@ -5,12 +5,11 @@
 // base path, that will be used to resolve files and exclude
 basePath = '';
 
+frameworks = ['mocha'];
 
 // list of files / patterns to load in the browser
 
 files = [
-    MOCHA,
-    MOCHA_ADAPTER,
     'build/test-build.js',
     'build/test-loader.js'
 ];
@@ -48,7 +47,7 @@ autoWatch = true;
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome', 'Firefox', 'Safari'];
+browsers = ['Chrome', 'Firefox','Safari'];
 
 // If browser does not capture in given timeout [ms], kill it
 captureTimeout = 60000;
@@ -57,3 +56,21 @@ captureTimeout = 60000;
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit
 singleRun = true;
+
+
+module.exports = function(config){
+    config.set({
+        basePath:basePath,
+        frameworks:frameworks,
+        files:files,
+        reporters:reporters,
+        port:port,
+        runnerPort:runnerPort,
+        colors:colors,
+        logLevel:logLevel,
+        autoWatch:autoWatch,
+        browsers:browsers,
+        captureTimeout:captureTimeout,
+        singleRun:singleRun
+    });
+};

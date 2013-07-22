@@ -7,10 +7,9 @@ basePath = '';
 
 
 // list of files / patterns to load in the browser
+frameworks = ['mocha'];
 
 files = [
-    MOCHA,
-    MOCHA_ADAPTER,
     'build/test-build-coverage.js',
     'build/test-loader-coverage.js'
 ];
@@ -22,7 +21,7 @@ reporters = ['dots','growl','coverage'];
 coverageReporter = {
   type : 'html',
   dir : 'coverage/'
-}
+};
 
 // web server port
 port = 9876;
@@ -62,3 +61,21 @@ captureTimeout = 60000;
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit
 singleRun = true;
+
+
+module.exports = function(config){
+    config.set({
+        basePath:basePath,
+        frameworks:frameworks,
+        files:files,
+        reporters:reporters,
+        port:port,
+        runnerPort:runnerPort,
+        colors:colors,
+        logLevel:logLevel,
+        autoWatch:autoWatch,
+        browsers:browsers,
+        captureTimeout:captureTimeout,
+        singleRun:singleRun
+    });
+};
