@@ -1,4 +1,4 @@
-default_build: test
+default_build: test test-when
 
 node_modules: package.json
 	@npm install
@@ -7,7 +7,7 @@ components: component.json
 	echo "installing components"
 	@component install --dev
 
-build/test-build.js: components lib/*
+build/test-build.js: components lib/* test/* test-lib/*
 	echo "Creating test-build"
 	@component test-build
 
@@ -29,6 +29,9 @@ git-clean:
 test: node_modules
 	@mocha --reporter spec --grep @performance --invert
 	
+test-when: node_modules
+	@USE_WHEN_PROMISES=1 mocha --reporter spec --grep @performance --invert
+
 test-fast: node_modules
 	@mocha --reporter spec --grep @slow --invert
 

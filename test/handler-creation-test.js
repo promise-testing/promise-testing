@@ -1,7 +1,7 @@
 var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
-var Q = require('q');
+var Q = require('../test-lib/promise-shim.js');
 var PromiseTesting = require('../lib/promise-testing.js');
 
 chai.use(sinonChai);

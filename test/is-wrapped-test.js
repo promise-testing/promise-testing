@@ -2,7 +2,7 @@
 var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
-var q = require('q');
+var q = require('../test-lib/promise-shim.js');
 var PromiseTester = require('../lib/promise-testing.js');
 chai.use(sinonChai);
 var expect = chai.expect,

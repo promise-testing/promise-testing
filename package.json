@@ -19,7 +19,7 @@
   "author": "James Talmage",
   "license": "MIT",
   "dependencies": {
-      "amdefine": "0.0.4"
+    "amdefine": "0.0.4"
   },
   "optionalDependencies": {
     "chai": "~1.5.0"
@@ -30,6 +30,7 @@
     "sinon": "~1.6.0",
     "growl": "~1.7.0",
     "chai-as-promised": "~3.3.1",
-    "requirejs": "~2.1.6"
+    "requirejs": "~2.1.6",
+    "when": "~2.2.1"
   }
 }

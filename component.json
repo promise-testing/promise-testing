@@ -21,16 +21,21 @@
     "lib/properties.js",
     "lib/property-listeners.js"
   ],
+  "devScripts" : [
+    "test-lib/promise-shim.js"
+  ],
   "testScripts": [
     "test/chai-flavor-test.js",
     "test/context-test.js",
     "test/handler-creation-test.js",
     "test/is-wrapped-test.js",
     "test/promise-testing-test.js",
-    "test/performance-test.js"
+    "test/performance-test.js",
+    "test/patch-test.js"
   ],
   "development": {
     "microjs/q": "*",
+    "jamestalmage/when": "*",
     "jamestalmage/sinon": "*",
     "chaijs/chai": "*",
     "jamestalmage/sinon-chai": "*",
