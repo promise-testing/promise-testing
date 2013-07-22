@@ -51,7 +51,7 @@ test-browser: build/test-build.js
 
 test-browser-coverage: coverage-stage/build/test-build.js
 	@echo "Testing In Browers (WITH COVERAGE)"
-	@./node_modules/.bin/karma start karma.coverage.conf.js
+	@PROMISE_TESTING_COV=1 ./node_modules/.bin/karma start
 	
 lib-cov: lib/*
 	@echo "Instrumenting source for code coverage."
