@@ -88,7 +88,7 @@ module.exports = function(config){
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    config.singleRun = false;
+    config.singleRun = true;
 
 
     //config_object.set(config);
