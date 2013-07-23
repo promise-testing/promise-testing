@@ -8,6 +8,11 @@ Promise Testing
 * Support for [NPM](https://npmjs.org/) and [Component](https://github.com/component/component) package managers.
 * Test/Assertion framework agnostic. Support for [Mocha](http://visionmedia.github.io/mocha/) and [Chai](http://chaijs.com/) built in.
 
+Quick Start
+===========
+
+See the [example](https://github.com/promise-testing/promise-testing/blob/master/test/example-test.js);
+
 Usage
 =====
 
