@@ -1,5 +1,4 @@
 Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-testing.png)](https://travis-ci.org/promise-testing/promise-testing)
-
 ===============
 
 **A testing library for then-able promises.**
