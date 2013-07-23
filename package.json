@@ -4,7 +4,7 @@
   "description": "a utility for testing promise code",
   "main": "lib/promise-testing.js",
   "scripts": {
-    "test": "mocha --check-leaks -c -R spec"
+    "test": "./node_modules/.bin/mocha --check-leaks -c -R spec"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {},
   "optionalDependencies": {
-      "karma-safari-launcher": "0.0.3"
+    "karma-safari-launcher": "0.0.3"
   },
   "devDependencies": {
     "chai": "~1.5.0",
@@ -43,6 +43,7 @@
     "karma-mocha": "0.0.4",
     "karma-coverage": "0.0.4",
     "istanbul": "~0.1.42",
-    "karma-growl-reporter": "0.0.2"
+    "karma-growl-reporter": "0.0.2",
+    "mocha": "~1.12.0"
   }
 }
