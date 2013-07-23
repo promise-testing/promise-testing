@@ -20,9 +20,10 @@
   "license": "MIT",
   "dependencies": {},
   "optionalDependencies": {
-    "chai": "~1.5.0"
+      "karma-safari-launcher": "0.0.3"
   },
   "devDependencies": {
+    "chai": "~1.5.0",
     "q": "~0.9.3",
     "sinon-chai": "~2.4.0",
     "sinon": "~1.6.0",
@@ -40,7 +41,6 @@
     "karma-coffee-preprocessor": "0.0.3",
     "karma-phantomjs-launcher": "0.0.2",
     "karma-mocha": "0.0.4",
-    "karma-safari-launcher": "0.0.3",
     "karma-coverage": "0.0.4",
     "istanbul": "~0.1.42",
     "karma-growl-reporter": "0.0.2"

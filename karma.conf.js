@@ -80,7 +80,18 @@ module.exports = function(config){
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    config.browsers = ['Chrome', 'Firefox','Safari'];
+
+    var browsers = ['PhantomJS'];
+
+    if(process.platform == 'darwin'){
+        browsers = browsers.concat(['Chrome','Firefox','Safari']);
+    }
+    else {
+        console.log(process.platform);
+    }
+
+    config.browsers = browsers;
+
 
     // If browser does not capture in given timeout [ms], kill it
     config.captureTimeout = 60000;
