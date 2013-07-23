@@ -51,20 +51,19 @@ test-performance: node_modules
 	@echo "Running performance tests vs chai-as-promised"
 	@mocha --reporter $(REPORTER) --grep @performance
 	
-test-browser: build/test-build.js
+test-browser: build/test-build.js node_modules
 	@echo "Testing In Browsers"
 	@./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
-test-browser-when: build/test-build.js
+test-browser-when: build/test-build.js node_modules
 	@echo "Testing In Browsers (USING WHEN PROMISES)"
 	@USE_WHEN_PROMISES=1 ./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
-
-test-browser-coverage: coverage-stage/build/test-build.js
+test-browser-coverage: coverage-stage/build/test-build.js node_modules
 	@echo "Testing In Browers (WITH COVERAGE)"
 	@PROMISE_TESTING_COV=1 ./node_modules/.bin/karma start --single-run
 	
-lib-cov: lib/*
+lib-cov: lib/* node_modules
 	@echo "Instrumenting source for code coverage."
 	@./node_modules/.bin/istanbul instrument lib -o lib-cov
 

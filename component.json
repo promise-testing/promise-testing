@@ -1,6 +1,6 @@
 {
   "name": "promise-testing",
-  "repo": "promise-testing/core",
+  "repo": "promise-testing/promise-testing",
   "version": "0.0.0",
   "description": "Promise Testing Utility",
   "license": "MIT",

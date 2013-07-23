@@ -1,6 +1,8 @@
 .idea/
 test/
+test-lib/
 coverage/
+coverage-stage/
 build/
 npm-debug.log
 .git/

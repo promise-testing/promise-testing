@@ -1,9 +1,10 @@
 .idea/
 node_modules/
 coverage/
+coverage-stage/
 build/
 jasmine-*.js
 jasmineAdapter-*.js
 npm-debug.log
-components
+components/
 libpeerconnection.log
