@@ -85,7 +85,10 @@ coverage-stage/build/test-build.js: coverage-stage
 	@echo "Compiling component test-build (WITH COVERAGE)"
 	@cd coverage-stage; component test-build
 
-
+promise-testing.js: components lib/*
+	@echo "Creating Standalone build"
+	@component build -s PromiseTesting
+	@mv build/build.js promise-testing.js
 
 
 
