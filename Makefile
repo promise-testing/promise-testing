@@ -39,9 +39,9 @@ git-clean:
 	@git clean -f -d -x -e .idea/
 	
 test: node_modules
-	@mocha --reporter $(REPORTER) --grep @performance --invert
+	@mocha --reporter $(REPORTER) --grep @performance --invert test/*-test.js examples/*-test.js
 	
-test-when: node_modules
+test-when: node_modules 
 	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --grep @performance --invert
 
 test-fast: node_modules
@@ -89,6 +89,10 @@ promise-testing.js: components lib/*
 	@component build -s PromiseTesting
 	@mv build/build.js promise-testing.js
 
+docs: examples/*
+	@echo "Creating docs"
+	@./node_modules/.bin/docco -l parallel examples/*
+	@touch docs
 
 
 .PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser default_build

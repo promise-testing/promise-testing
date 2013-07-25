@@ -4,6 +4,7 @@ test-lib/
 coverage/
 coverage-stage/
 build/
+examples/
 npm-debug.log
 .git/
 jasmine-*.js

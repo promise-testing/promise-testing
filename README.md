@@ -11,7 +11,7 @@ Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-t
 Quick Start
 ===========
 
-See the [example](https://github.com/promise-testing/promise-testing/blob/master/test/example-test.js);
+See the [example](https://github.com/promise-testing/promise-testing/blob/master/examples/example-test.js);
 
 Usage
 =====

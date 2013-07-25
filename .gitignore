@@ -3,6 +3,7 @@ node_modules/
 coverage/
 coverage-stage/
 build/
+docs/
 jasmine-*.js
 jasmineAdapter-*.js
 npm-debug.log

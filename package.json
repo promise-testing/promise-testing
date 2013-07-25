@@ -44,6 +44,8 @@
     "karma-coverage": "0.0.4",
     "istanbul": "~0.1.42",
     "karma-growl-reporter": "0.0.2",
-    "mocha": "~1.12.0"
+    "mocha": "~1.12.0",
+    "docco": "~0.6.2",
+    "promise-testing": "*"
   }
 }
