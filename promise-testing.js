@@ -197,7 +197,7 @@ require.relative = function(parent) {
   return localRequire;
 };
 require.register("promise-testing/index.js", function(exports, require, module){
-module.exports = require('lib/promise-testing.js');
+module.exports = require('./lib/promise-testing.js');
 });
 require.register("promise-testing/lib/chai-flavor.js", function(exports, require, module){
 function ChaiFlavor(chai){

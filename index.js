@@ -1,1 +1,1 @@
-module.exports = require('lib/promise-testing.js');
+module.exports = require('./lib/promise-testing.js');

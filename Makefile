@@ -84,7 +84,7 @@ coverage-stage/build/test-build.js: coverage-stage
 	@echo "Compiling component test-build (WITH COVERAGE)"
 	@cd coverage-stage; component test-build
 
-promise-testing.js: components lib/*
+promise-testing.js: components index.js lib/*
 	@echo "Creating Standalone build"
 	@component build -s PromiseTesting
 	@mv build/build.js promise-testing.js
@@ -93,6 +93,39 @@ docs: examples/*
 	@echo "Creating docs"
 	@./node_modules/.bin/docco -l parallel examples/*
 	@touch docs
+	
+promise-testing-bower:
+	@if [ ! -d promise-testing-bower ] ; \
+	then \
+	  echo "fetching bower repo" ; \
+	  git clone git@github.com:promise-testing/promise-testing-bower ; \
+	else \
+	  echo "updating bower repo" ; \
+	  cd promise-testing-bower; git pull; \
+	fi;
 
+bower: promise-testing.js promise-testing-bower
+	@echo "making bower release"
+	@node update-bower.js
+	@cp -f bower.json promise-testing-bower/bower.json
+	@cp -f promise-testing.js promise-testing-bower/promise-testing.js
 
-.PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser default_build
+TESTVAL=$(shell node -p 'require("./package.json").version')
+
+push-bower: bower
+	@echo "pushing bower release v${TESTVAL}" ;
+	@if [ -d promise-testing-bower ] ; \
+	then \
+		cd promise-testing-bower ; \
+		git add bower.json ; \
+		git add promise-testing.js ; \
+		git commit -m "auto commit v${TESTVAL} from makefile" ; \
+		git tag -f -a v${TESTVAL} -m "auto tagging v${TESTVAL} from makefile" ; \
+		git push ; \
+		git push origin --tags; \
+	else \
+		echo "blah" ; \
+	fi;
+
+.PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser
+.PHONY: default_build promise-testing-bower bower
