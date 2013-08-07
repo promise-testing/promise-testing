@@ -421,6 +421,7 @@ var utils = require('./handler-utils.js');
 var Properties = require('./properties.js');
 var PropertyListeners = require('./property-listeners.js');
 var Context = require('./context.js');
+var ChaiFlavor = require('./chai-flavor.js');
 
 function PromiseTester(){
     var properties = new Properties();
@@ -490,28 +491,35 @@ function PromiseTester(){
 
     this.isWrapped = isWrappedFunction;
 
-    this.wrap = function(promise){
+    function wrap(promise){
         if(isWrappedFunction(promise)){
             return promise;
         }
         return wrapPromise(promise);
-    };
+    }
+
+    this.wrap = wrap;
+
+    function wrapf(fn){
+        return function(){return wrap(fn.apply(this,arguments))};
+    }
+
+    this.wrapf = wrapf;
 
     this.patch = function(obj,prop){
         if(!obj || typeof obj[prop] !== 'function') throw Error('Obj must exist and obj[prop] must be a function');
-
-        var fn = obj[prop];
-        var self = this;
-
-        obj[prop] = function(){
-            return self.wrap(fn.apply(this,arguments));
-        }
+        obj[prop] = wrapf(obj[prop]);
     };
 
-    this.use = function(fn){
+    function use(fn){
         fn(properties,utils);
+    }
 
-    };
+    this.use = use;
+
+    this.scanChai = function (chai) {
+        use(ChaiFlavor(chai));
+    }
 }
 
 module.exports = PromiseTester;

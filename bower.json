@@ -1,0 +1,12 @@
+{
+  "name": "promise-testing",
+  "version": "0.0.0",
+  "main": "promise-testing.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

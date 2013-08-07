@@ -9,3 +9,4 @@ jasmineAdapter-*.js
 npm-debug.log
 components/
 libpeerconnection.log
+promise-testing-bower
