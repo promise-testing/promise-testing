@@ -1,7 +1,7 @@
 {
   "name": "promise-testing",
   "repo": "promise-testing/promise-testing",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Promise Testing Utility",
   "license": "MIT",
   "keywords": [
@@ -31,11 +31,10 @@
     "test/is-wrapped-test.js",
     "test/promise-testing-test.js",
     "test/performance-test.js",
-    "test/patch-test.js",
-    "test/example-test.js"
+    "test/patch-test.js"
   ],
   "development": {
-    "microjs/q": "*",
+    "promise-testing/q": "*",
     "jamestalmage/when": "*",
     "jamestalmage/sinon": "*",
     "chaijs/chai": "*",

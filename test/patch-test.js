@@ -40,9 +40,9 @@ describe('patch',function(){
 
         var obj = {'a':myFunc};
 
-        expect(obj.a()).to.equal(retVal);
+        expect(engine.isWrapped(obj.a())).to.equal(false);
         engine.patch(obj,'a');
-        expect(obj.a()).not.to.equal(retVal);
+        expect(engine.isWrapped(obj.a())).to.equal(true);
     });
 
 });

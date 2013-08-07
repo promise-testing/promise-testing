@@ -1,6 +1,7 @@
 // Karma configuration
 
 module.exports = function(config){
+    console.log("CONFIGURING KARMA");
 
     //var config = {};
 
@@ -18,6 +19,7 @@ module.exports = function(config){
     var files = [];
 
     if(when){
+        console.log("USING WHEN PROMISES**")
         files.push('when-environment.js');
     }
 
@@ -65,7 +67,7 @@ module.exports = function(config){
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    config.logLevel = config.LOG_DEBUG;
+    config.logLevel = config.WARN;
 
 
     // enable / disable watching file and executing tests whenever any file changes
@@ -81,14 +83,15 @@ module.exports = function(config){
     // - PhantomJS
     // - IE (only Windows)
 
-    var browsers = ['PhantomJS'];
+    var browsers = ['Chrome'];
+    /*var browsers = ['PhantomJS'];
 
     if(process.platform == 'darwin'){
         browsers = browsers.concat(['Chrome','Firefox','Safari']);
     }
     else {
         console.log(process.platform);
-    }
+    }     */
 
     config.browsers = browsers;
 
@@ -99,7 +102,7 @@ module.exports = function(config){
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    config.singleRun = true;
+    config.singleRun = false;
 
 
     //config_object.set(config);

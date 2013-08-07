@@ -18,7 +18,7 @@ beforeEach(function(){
 
 describe('addProperty',function(){
 
-    var constructor,playback,record,deferred = Q.defer(),options ;
+    var constructor,playback,record,deferred,options ;
 
     beforeEach(function(){
         constructor = sinon.spy();
