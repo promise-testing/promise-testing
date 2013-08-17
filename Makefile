@@ -6,7 +6,8 @@ else
 	KARMA_RUN_FLAG=--single-run
 endif
 
-default_build: test test-when
+default_build: test test-browser test-browser-when
+
 
 node_modules: package.json
 	@echo "Installing Node Dependencies"

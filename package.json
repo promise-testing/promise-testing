@@ -1,6 +1,6 @@
 {
   "name": "promise-testing",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a utility for testing promise code",
   "main": "lib/promise-testing.js",
   "scripts": {
@@ -19,9 +19,6 @@
   "author": "James Talmage",
   "license": "MIT",
   "dependencies": {},
-  "optionalDependencies": {
-    "karma-safari-launcher": "0.0.3"
-  },
   "devDependencies": {
     "chai": "~1.5.0",
     "q": "~0.9.3",
@@ -31,21 +28,19 @@
     "chai-as-promised": "~3.3.1",
     "requirejs": "~2.1.6",
     "when": "~2.2.1",
-    "karma": "~0.9.5",
-    "karma-script-launcher": "0.0.2",
-    "karma-chrome-launcher": "0.0.2",
-    "karma-firefox-launcher": "0.0.3",
-    "karma-html2js-preprocessor": "0.0.2",
-    "karma-jasmine": "0.0.3",
-    "karma-requirejs": "0.0.2",
-    "karma-coffee-preprocessor": "0.0.3",
-    "karma-phantomjs-launcher": "0.0.2",
-    "karma-mocha": "0.0.4",
-    "karma-coverage": "0.0.4",
-    "istanbul": "~0.1.42",
-    "karma-growl-reporter": "0.0.2",
     "mocha": "~1.12.0",
     "docco": "~0.6.2",
-    "promise-testing": "*"
+    "karma": "~0.10.1",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-coverage": "~0.1.0",
+    "istanbul": "~0.1.43",
+    "karma-growl-reporter": "~0.1.0",
+    "promise-testing": "*",
+    "karma-mocha": "~0.1.0"
+  },
+  "optionalDependencies": {
+    "karma-safari-launcher": "~0.1.1"
   }
 }
