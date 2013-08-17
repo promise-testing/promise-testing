@@ -136,6 +136,7 @@ release: push-bower
 	@git tag -f -a v${TESTVAL} -m "tagging v${TESTVAL}"
 	@git push
 	@git push origin --tags
+	@npm publish
 
 .PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser
 .PHONY: default_build promise-testing-bower bower release
