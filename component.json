@@ -1,7 +1,7 @@
 {
   "name": "promise-testing",
   "repo": "promise-testing/promise-testing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Promise Testing Utility",
   "license": "MIT",
   "keywords": [
@@ -21,7 +21,7 @@
     "lib/properties.js",
     "lib/property-listeners.js"
   ],
-  "devScripts" : [
+  "devScripts": [
     "test-lib/promise-shim.js"
   ],
   "testScripts": [

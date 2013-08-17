@@ -427,47 +427,64 @@ function PromiseTester(){
     var properties = new Properties();
 
     var muteActions = false, isWrapped = false;
-    function wrapPromise(promise){
 
-        var stack,currentExecutionHandler,listeners;
+    function wrapPromise(promise){
+        promise.then = _wrapPromise(promise,promise.then);
+        return promise;
+    }
+
+    function _wrapPromise(promise,then){
+
+        var stack,listeners, nextPromise,
+            currentExecutionHandler = simpleThenCall;
 
         function execute(){
-            currentExecutionHandler.apply(null,arguments);
-            return execute;
+            return currentExecutionHandler.apply(null,arguments);
         }
 
         function simpleThenCall(){
-            return promise = promise.then.apply(promise,arguments);
+            return wrapPromise(then.apply(promise,arguments));
         }
 
         function createAndPushHandler(propName){
+            if(!stack){
+                stack = [];
+                listeners = new PropertyListeners();
+                nextPromise = then.apply(promise,Context.createExecutionArgs(stack));
+            }
             listeners.notifyPropertyAdded(propName);
             var handler = properties.createHandler(propName,listeners);
             currentExecutionHandler = handler.recordExecution
-                ? handler.recordExecution.bind(handler)
+                ? function(){
+                    handler.recordExecution.apply(handler,arguments);
+                    return execute;
+                }
                 : function() {throw Error('property ' + propName + ' can not be executed');};
             stack.push(handler);
+            return execute;
         }
 
         function addChainableGetter(propName,onGet){
             Object.defineProperty(execute,propName,{
                 get:function(){
-                    if(muteActions){
-                        isWrapped = true;
-                        return execute;
-                    }
-                    onGet(propName);
-                    if(stack.length == 1) promise = promise.then.apply(promise,Context.createExecutionArgs(stack));
-                    return execute;
+                    return onGet(propName);
                 },
                 configurable:true
             });
         }
 
         addChainableGetter('then',function(){
-            stack = [];
-            listeners = new PropertyListeners();
-            currentExecutionHandler = simpleThenCall;
+            if(muteActions){
+                isWrapped = true;
+                return execute;
+            }
+            //return wrapPromise(nextPromise).then;
+            if(nextPromise){
+                return wrapPromise(nextPromise).then;
+            }
+            else {
+                return execute;
+            }
         });
 
         properties.getPropertyNames().forEach(function(propName){
@@ -481,7 +498,7 @@ function PromiseTester(){
         isWrapped = false;
         muteActions = true;
         try {
-            promise.then;
+            promise.then.then;
             return isWrapped;
         }
         finally {
@@ -492,9 +509,9 @@ function PromiseTester(){
     this.isWrapped = isWrappedFunction;
 
     function wrap(promise){
-        if(isWrappedFunction(promise)){
+      /*  if(isWrappedFunction(promise)){
             return promise;
-        }
+        }      */
         return wrapPromise(promise);
     }
 
@@ -594,9 +611,7 @@ function PropertyListeners(){
 module.exports = PropertyListeners;
 
 });
-require.alias("promise-testing/index.js", "promise-testing/index.js");
-
-if (typeof exports == "object") {
+require.alias("promise-testing/index.js", "promise-testing/index.js");if (typeof exports == "object") {
   module.exports = require("promise-testing");
 } else if (typeof define == "function" && define.amd) {
   define(function(){ return require("promise-testing"); });
