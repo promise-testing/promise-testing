@@ -119,13 +119,23 @@ push-bower: bower
 		cd promise-testing-bower ; \
 		git add bower.json ; \
 		git add promise-testing.js ; \
-		git commit -m "auto commit v${TESTVAL} from makefile" ; \
-		git tag -f -a v${TESTVAL} -m "auto tagging v${TESTVAL} from makefile" ; \
+		git commit -m "releasing v${TESTVAL}" ; \
+		git tag -f -a v${TESTVAL} -m "tagging v${TESTVAL}" ; \
 		git push ; \
 		git push origin --tags; \
 	else \
-		echo "blah" ; \
+		echo "ERROR RELEASING BOWER" ; \
 	fi;
 
+release: push-bower
+	@echo "tagging and pushing"
+	@git add bower.json
+	@git add promise-testing.js
+	@git add component.json
+	@git commit -m "releasing v${TESTVAL}"
+	@git tag -f -a v${TESTVAL} -m "tagging v${TESTVAL}"
+	@git push
+	@git push origin --tags
+
 .PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser
-.PHONY: default_build promise-testing-bower bower
+.PHONY: default_build promise-testing-bower bower release
