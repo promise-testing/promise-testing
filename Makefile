@@ -1,4 +1,5 @@
 REPORTER=dot
+TIMEOUT=200
 
 ifeq ($(WATCH),true)
 	KARMA_RUN_FLAG=--no-single-run
@@ -19,7 +20,7 @@ components: component.json
 	@component install --dev
 	@touch components
 
-build/test-build.js: components lib/* test/* test-lib/*
+build/test-build.js: components lib/* test/* test-lib/* slow-tests/*
 	@echo "Compiling component test-build"
 	@./node_modules/.bin/component-test-build
 
@@ -40,18 +41,29 @@ git-clean-show:
 git-clean:
 	@git clean -f -d -x -e .idea/
 	
-test: node_modules
-	@mocha --reporter $(REPORTER) --grep @performance --invert test/*-test.js examples/*-test.js
+test: test-core test-aplus test-performance
+
+test-core: node_modules
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT)
 	
-test-when: node_modules 
-	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --grep @performance --invert
-
-test-fast: node_modules
-	@mocha --reporter $(REPORTER) --grep @slow --invert
-
 test-performance: node_modules
 	@echo "Running performance tests vs chai-as-promised"
-	@mocha --reporter $(REPORTER) --grep @performance
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/performance*.js
+
+test-aplus: node_modules
+	@echo "Testing that wrapped and chained promises conform to Promises/A+"
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/chained*.js
+	@echo "Testing that wrapped promises conform to Promises/A+"
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/wrapped*.js
+	
+test-when: node_modules 
+	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --timeout $(TIMEOUT) 
+	@echo "Testing that wrapped and chained promises conform to Promises/A+"
+	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/chained*.js
+	@echo "Testing that wrapped promises conform to Promises/A+"
+	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/wrapped*.js
+	@echo "Running performance tests vs chai-as-promised"
+	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/performance*.js
 	
 test-browser: build/test-build.js node_modules
 	@echo "Testing In Browsers"

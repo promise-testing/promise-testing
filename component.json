@@ -31,8 +31,9 @@
     "test/integration-test.js",
     "test/is-wrapped-test.js",
     "test/promise-testing-test.js",
-    "test/performance-test.js",
-    "test/patch-test.js"
+    "test/patch-test.js",
+    "slow-tests/chained-promise-aplus-test.js",
+    "slow-tests/performance-test.js"
   ],
   "development": {
     "promise-testing/q": "*",

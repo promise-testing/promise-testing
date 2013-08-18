@@ -11,10 +11,17 @@ var expect = chai.expect,
 
 describe('integration tests',function(){
 
-    var engine = new PromiseTester();
-    engine.scanChai(chai);
+    var engine,defer;
 
-    var defer = q.defer;
+    beforeEach(function(){
+
+        engine = new PromiseTester();
+        engine.scanChai(chai);
+
+        defer = q.defer;
+
+    });
+
 
     describe('single promise',function(){
 
@@ -46,22 +53,8 @@ describe('integration tests',function(){
                 expect(originalThen).to.have.been.calledWith(fn1,fn2);
             });
 
-            describe('can be used as standard promises without side effect',function(){
-                require("promises-aplus-tests").mocha({
-                    fulfilled: function(val){return engine.wrap(q.resolve(val))},
-                    rejected: function(val){return engine.wrap(q.reject(val))},
-                    pending:function () {
-                        var deferred = q.defer();
-                        engine.wrap(deferred.promise);
 
-                        return {
-                            promise: deferred.promise,
-                            fulfill: deferred.resolve,
-                            reject: deferred.reject
-                        };
-                    }
-                });
-            });
+
         });
 
         describe('isWrapped', function () {
