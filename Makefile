@@ -15,7 +15,7 @@ node_modules: package.json
 	@npm install
 	@touch node_modules
 
-components: component.json
+components: node_modules component.json
 	@echo "Installing Component Dependencies"
 	@./node_modules/.bin/component-install --dev
 	@touch components
@@ -65,7 +65,7 @@ test-when: node_modules
 	@echo "Running performance tests vs chai-as-promised"
 	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --timeout $(TIMEOUT) slow-tests/performance*.js
 	
-test-browser: build/test-build.js node_modules
+test-browser: build/test-build.js node_modules/
 	@echo "Testing In Browsers"
 	./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
