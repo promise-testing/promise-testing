@@ -20,7 +20,7 @@ components: component.json
 
 build/test-build.js: components lib/* test/* test-lib/*
 	@echo "Compiling component test-build"
-	@component test-build
+	@./node_modules/.bin/component-test-build
 
 clean:
 	@echo "Cleaning up build artifacts"
@@ -54,7 +54,7 @@ test-performance: node_modules
 	
 test-browser: build/test-build.js node_modules
 	@echo "Testing In Browsers"
-	@./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
+	./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
 
 test-browser-when: build/test-build.js node_modules
 	@echo "Testing In Browsers (USING WHEN PROMISES)"
