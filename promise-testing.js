@@ -565,8 +565,17 @@ function Properties() {
 
    this.addProperty = addProperty;
    this.createHandler = createHandler;
-   this.getPropertyNames = Object.getOwnPropertyNames.bind(null,thenPropertyHandlers);
-   this.hasProperty = thenPropertyHandlers.hasOwnProperty.bind(thenPropertyHandlers);
+   function simpleBind(target,fn){
+       return function(){
+           fn.apply(target,Array.prototype.slice.call(arguments));
+       }
+   }
+   this.getPropertyNames = function(){
+       return Object.getOwnPropertyNames(thenPropertyHandlers);
+   };
+   this.hasProperty = function(prop){
+       return thenPropertyHandlers.hasOwnProperty(prop);
+   };
 }
 
 module.exports = Properties;

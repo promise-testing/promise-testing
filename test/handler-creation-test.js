@@ -51,12 +51,21 @@ describe('addProperty',function(){
     });
 
     it('if recordExecution is true, execution arguments will be saved in.args',function(){
-
         options.recordExecution = true;
         properties.addProperty('prop1',utils.buildHandler(options));
         engine.wrap(deferred.promise).then.prop1('hello');
         expect(getInstance().args).to.eql(['hello']);
     });
+
+
+    it('if recordExecution is true, handler.args will be an instance of Array',function(){
+        //Handles a PhantomJS quirk
+        options.recordExecution = true;
+        properties.addProperty('prop1',utils.buildHandler(options));
+        engine.wrap(deferred.promise).then.prop1('hello');
+        expect(getInstance().args).to.be.an.instanceOf(Array);
+    });
+
 
     it('if recordExecution is array of strings, arguments will be mapped to properties',function(){
         options.recordExecution = ['arg1','arg2'];

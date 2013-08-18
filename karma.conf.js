@@ -83,7 +83,7 @@ module.exports = function(config){
     // - PhantomJS
     // - IE (only Windows)
 
-    var browsers = ['Chrome'];
+    var browsers = ['Chrome','PhantomJS'];
     if(process.env.TRAVIS){
         browsers = ['PhantomJS','Firefox'];
     }

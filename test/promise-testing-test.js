@@ -100,8 +100,13 @@ function SpyDeferred(){
         return handler(arg);
     }
 
-    this.reject = handleStep.bind(null,rejectHandlers,'reject');
-    this.resolve = handleStep.bind(null,resolveHandlers,'resolve');
+    this.reject = function(arg,index){
+        return handleStep(rejectHandlers,'reject',arg,index);
+    } ;
+
+    this.resolve = function(arg,index){
+        return handleStep(resolveHandlers,'resolve',arg,index);
+    }  ;
 
     sinon.spy(this,'reject');
     sinon.spy(this,'resolve');
