@@ -17,6 +17,7 @@ node_modules: package.json
 components: component.json
 	@echo "Installing Component Dependencies"
 	@component install --dev
+	@touch components
 
 build/test-build.js: components lib/* test/* test-lib/*
 	@echo "Compiling component test-build"
