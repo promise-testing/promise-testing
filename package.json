@@ -4,7 +4,7 @@
   "description": "a utility for testing promise code",
   "main": "lib/promise-testing.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --check-leaks -c -R spec"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
