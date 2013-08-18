@@ -4,7 +4,7 @@
   "description": "a utility for testing promise code",
   "main": "lib/promise-testing.js",
   "scripts": {
-    "test": "make test"
+    "test": "make test-everything REPORTER=spec TIMEOUT=400"
   },
   "repository": {
     "type": "git",
@@ -40,7 +40,8 @@
     "promise-testing": "*",
     "karma-mocha": "~0.1.0",
     "promises-aplus-tests": "~1.3.2",
-    "component-test-builder": "0.0.3"
+    "component-test-builder": "0.0.3",
+    "karma-phantomjs-launcher": "~0.1.0"
   },
   "optionalDependencies": {
     "karma-safari-launcher": "~0.1.1"

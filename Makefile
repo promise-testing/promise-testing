@@ -72,6 +72,8 @@ test-browser: build/test-build.js node_modules
 test-browser-when: build/test-build.js node_modules
 	@echo "Testing In Browsers (USING WHEN PROMISES)"
 	@USE_WHEN_PROMISES=1 ./node_modules/.bin/karma start $(KARMA_RUN_FLAG)
+	
+test-everything: test test-when test-browser test-browser-when
 
 test-browser-coverage: coverage-stage/build/test-build.js node_modules
 	@echo "Testing In Browers (WITH COVERAGE)"
@@ -152,5 +154,6 @@ release: push-bower
 	@git push origin --tags
 	@npm publish
 
-.PHONY: clean clean-all git-clean-show git-clean test test-fast test-performance test-browser
+.PHONY: clean clean-all git-clean-show git-clean 
+.PHONY: test test-core test-performance test-aplus test-when test-browser test-browser-when test-everything
 .PHONY: default_build promise-testing-bower bower release

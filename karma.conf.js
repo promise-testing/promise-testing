@@ -84,6 +84,9 @@ module.exports = function(config){
     // - IE (only Windows)
 
     var browsers = ['Chrome'];
+    if(process.env.TRAVIS){
+        browsers = ['PhantomJS','Firefox'];
+    }
     /*var browsers = ['PhantomJS'];
 
     if(process.platform == 'darwin'){
