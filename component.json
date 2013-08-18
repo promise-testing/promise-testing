@@ -28,6 +28,7 @@
     "test/chai-flavor-test.js",
     "test/context-test.js",
     "test/handler-creation-test.js",
+    "test/integration-test.js",
     "test/is-wrapped-test.js",
     "test/promise-testing-test.js",
     "test/performance-test.js",
@@ -35,6 +36,7 @@
   ],
   "development": {
     "promise-testing/q": "*",
+    "promise-testing/promises-tests": "*",
     "jamestalmage/when": "*",
     "jamestalmage/sinon": "*",
     "chaijs/chai": "*",
