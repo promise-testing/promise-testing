@@ -17,7 +17,7 @@ node_modules: package.json
 
 components: component.json
 	@echo "Installing Component Dependencies"
-	@component install --dev
+	@./node_modules/.bin/component-install --dev
 	@touch components
 
 build/test-build.js: components lib/* test/* test-lib/* slow-tests/*
@@ -98,11 +98,11 @@ coverage-stage: components lib-cov
 
 coverage-stage/build/test-build.js: coverage-stage
 	@echo "Compiling component test-build (WITH COVERAGE)"
-	@cd coverage-stage; component test-build
+	@cd coverage-stage; ../node_modules/.bin/component-test-build
 
 promise-testing.js: components index.js lib/*
 	@echo "Creating Standalone build"
-	@component build -s PromiseTesting
+	@./node_modules/.bin/component-build -s PromiseTesting
 	@mv build/build.js promise-testing.js
 
 docs: examples/*
