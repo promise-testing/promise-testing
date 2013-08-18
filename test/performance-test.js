@@ -2,7 +2,7 @@ var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 var q = require('../test-lib/promise-shim.js');
-var PromiseTester = require('../lib/promise-testing.js');
+var PromiseTester = require('../index.js');
 var chaiFlavor = require('../lib/chai-flavor.js');
 var chaiAsPromised = require('chai-as-promised');
 

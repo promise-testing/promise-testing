@@ -88,9 +88,12 @@ describe('callStack ',function(){
 
 describe('createExecutionArgs', function () {
 
-    var stack;
+    var stack,tools;
 
     beforeEach(function(){
+        tools = {run:function(fn){
+            return fn;
+        }};
         stack = [
             {
                 propName:'prop1',
@@ -104,7 +107,7 @@ describe('createExecutionArgs', function () {
     });
 
     it('should create two args that are both functions', function () {
-        var args = Context.createExecutionArgs(stack);
+        var args = Context.createExecutionArgs(stack,tools);
         expect(args).to.have.length(2);
         expect(args[0]).to.be.a('function');
         expect(args[1]).to.be.a('function');
@@ -115,7 +118,7 @@ describe('createExecutionArgs', function () {
             ctx.returnValue = 'hello';
             next(null);
         };
-        var args = Context.createExecutionArgs(stack);
+        var args = Context.createExecutionArgs(stack,tools);
         expect(args[0]('val')).to.equal('hello');
     });
 
@@ -124,7 +127,7 @@ describe('createExecutionArgs', function () {
             ctx.returnValue = 'hello';
             next(null);
         };
-        var args = Context.createExecutionArgs(stack);
+        var args = Context.createExecutionArgs(stack,tools);
 
         expect(args[1]('val')).to.equal('hello');
     });
@@ -134,7 +137,7 @@ describe('createExecutionArgs', function () {
             expect(ctx).to.have.property('type').equal('result');
             next(null);
         };
-        Context.createExecutionArgs(stack)[0]('thisIsTheResult');
+        Context.createExecutionArgs(stack,tools)[0]('thisIsTheResult');
     });
 
     it('result handler should have result value saved in context',function(){
@@ -142,7 +145,7 @@ describe('createExecutionArgs', function () {
             expect(ctx).to.have.property('result').equal('thisIsTheResult');
             next(null);
         };
-        Context.createExecutionArgs(stack)[0]('thisIsTheResult');
+        Context.createExecutionArgs(stack,tools)[0]('thisIsTheResult');
     });
 
 
@@ -151,7 +154,7 @@ describe('createExecutionArgs', function () {
             expect(ctx).to.have.property('type').equal('reject');
             next(null);
         };
-        Context.createExecutionArgs(stack)[1]('thisIsTheResult');
+        Context.createExecutionArgs(stack,tools)[1]('thisIsTheResult');
     });
 
     it('reject handler should have reason value saved in context',function(){
@@ -159,7 +162,7 @@ describe('createExecutionArgs', function () {
             expect(ctx).to.have.property('reason').equal('thisIsTheResult');
             next(null);
         };
-        Context.createExecutionArgs(stack)[1]('thisIsTheResult');
+        Context.createExecutionArgs(stack,tools)[1]('thisIsTheResult');
     });
 
 });

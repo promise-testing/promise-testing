@@ -1,5 +1,5 @@
 REPORTER=dot
-
+TIMEOUT=250
 ifeq ($(WATCH),true)
 	KARMA_RUN_FLAG=--no-single-run
 else
@@ -38,19 +38,22 @@ git-clean-show:
 
 git-clean:
 	@git clean -f -d -x -e .idea/
-	
+
+test-simple: node_modules
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) test/*-test.js examples/*-test.js
+
 test: node_modules
-	@mocha --reporter $(REPORTER) --grep @performance --invert test/*-test.js examples/*-test.js
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) --grep @performance --invert test/*-test.js examples/*-test.js
 	
 test-when: node_modules 
-	@USE_WHEN_PROMISES=1 mocha --reporter $(REPORTER) --grep @performance --invert
+	@USE_WHEN_PROMISES=1 mocha --timeout $(TIMEOUT) --reporter $(REPORTER) --grep @performance --invert test/*-test.js examples/*-test.js
 
 test-fast: node_modules
-	@mocha --reporter $(REPORTER) --grep @slow --invert
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) --grep @slow --invert
 
 test-performance: node_modules
 	@echo "Running performance tests vs chai-as-promised"
-	@mocha --reporter $(REPORTER) --grep @performance
+	@mocha --reporter $(REPORTER) --timeout $(TIMEOUT) --grep @performance
 	
 test-browser: build/test-build.js node_modules
 	@echo "Testing In Browsers"

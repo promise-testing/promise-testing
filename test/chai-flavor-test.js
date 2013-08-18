@@ -2,7 +2,7 @@ var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 var q = require('../test-lib/promise-shim.js');
-var PromiseTester = require('../lib/promise-testing.js');
+var PromiseTester = require('../index.js');
 var chaiFlavor = require('../lib/chai-flavor.js');
 
 chai.use(sinonChai);
@@ -17,10 +17,10 @@ ShouldFail.prototype.recordExecution = function(done){
 };
 ShouldFail.prototype.playback = function(lastResult,next,ctx){
     if(ctx.reason){
-        this.done();
+        this.done()();
     }
     else {
-        this.done(Error('There Should have been a failure!'));
+        this.done()(Error('There Should have been a failure!'));
     }
     next(null);
 };

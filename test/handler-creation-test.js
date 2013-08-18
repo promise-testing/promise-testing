@@ -2,7 +2,7 @@ var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
 var Q = require('../test-lib/promise-shim.js');
-var PromiseTesting = require('../lib/promise-testing.js');
+var PromiseTesting = require('../index.js');
 
 chai.use(sinonChai);
 var expect = chai.expect,
@@ -38,7 +38,7 @@ describe('addProperty',function(){
         engine.wrap(deferred.promise).then.prop1('hello');
         expect(constructor).to.have.been.calledOnce;
         expect(getInstance().propName).to.equal('prop1');
-        expect(record).to.have.been.calledWith('hello');
+        expect(record).to.have.been.calledWith(matchFn('hello'));
     });
 
     it('if recordExecution is null, execution will cause an error',function(){
@@ -55,15 +55,17 @@ describe('addProperty',function(){
         options.recordExecution = true;
         properties.addProperty('prop1',utils.buildHandler(options));
         engine.wrap(deferred.promise).then.prop1('hello');
-        expect(getInstance().args).to.eql(['hello']);
+        expect(getInstance().args.length).to.eql(1);
+        expect(getInstance().args[0]()).to.eql('hello');
+
     });
 
     it('if recordExecution is array of strings, arguments will be mapped to properties',function(){
         options.recordExecution = ['arg1','arg2'];
         properties.addProperty('prop1',utils.buildHandler(options));
         engine.wrap(deferred.promise).then.prop1('hello','goodbye');
-        expect(getInstance().arg1).to.eql('hello');
-        expect(getInstance().arg2).to.eql('goodbye');
+        expect(getInstance().arg1()).to.eql('hello');
+        expect(getInstance().arg2()).to.eql('goodbye');
     });
 
     it('null constructor is acceptable',function(){
@@ -73,9 +75,14 @@ describe('addProperty',function(){
 
         var instance = record.firstCall.thisValue;
         expect(instance.propName).to.equal('prop1');
-        expect(record.firstCall).to.have.been.calledWith('hello','goodbye');
+        expect(record.firstCall).to.have.been.calledWith(matchFn('hello'),matchFn('goodbye'));
     });
 
+
+    function matchFn(expected){
+
+        return match(function(val){return expected === val();});
+    }
 });
 
 
