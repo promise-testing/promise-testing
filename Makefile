@@ -106,8 +106,7 @@ PKG_VERSION=$(shell node -e 'console.log(require("./package.json").version)')
 release: promise-testing.js
 	@echo "Updating From Version: ${PKG_VERSION}"
 	@PT_SEMVER_INC_TYPE=${INC} node update-bower.js
-	@sleep 3s
-	$(eval NEW_VERSION=$(shell node -e 'console.log(require("./package.json").version)'))
+	$(eval NEW_VERSION=$(shell ./node_modules/.bin/semver -i ${INC} ${PKG_VERSION}))
 	@echo "Updated To Version: ${NEW_VERSION}"
 	@echo "Tagging and Pushing to GitHub"
 	@git add bower.json
