@@ -1,5 +1,6 @@
 REPORTER=dot
 TIMEOUT=200
+INC=patch
 
 ifeq ($(WATCH),true)
 	KARMA_RUN_FLAG=--no-single-run
@@ -99,51 +100,45 @@ docs: examples/*
 	@echo "Creating docs"
 	@./node_modules/.bin/docco -l parallel examples/*
 	@touch docs
-	
-promise-testing-bower:
-	@if [ ! -d promise-testing-bower ] ; \
-	then \
-	  echo "fetching bower repo" ; \
-	  git clone git@github.com:promise-testing/promise-testing-bower ; \
-	else \
-	  echo "updating bower repo" ; \
-	  cd promise-testing-bower; git pull; \
-	fi;
 
-bower: promise-testing.js promise-testing-bower
-	@echo "making bower release"
-	@node update-bower.js
+PKG_VERSION=$(shell node -p 'require("./package.json").version')
+
+release: promise-testing.js
+	@echo "Updating From Version: ${PKG_VERSION}"
+	@PT_SEMVER_INC_TYPE=${INC} node update-bower.js
+	@echo "Updated To Version: ${PKG_VERSION}"
+	@echo "Tagging and Pushing to GitHub"
+	@git add bower.json
+	@git add promise-testing.js
+	@git add component.json
+	@git add package.json
+	@git commit -m "releasing v${PKG_VERSION}"
+	@git tag -f -a v${PKG_VERSION} -m "tagging v${PKG_VERSION}"
+	@git push
+	@git push origin --tags
+	@echo "Publishing to npm"
+	@npm publish
+	@echo "Cloning Bower Repo"
+	@rm -rf promise-testing-bower
+	@git clone git@github.com:promise-testing/promise-testing-bower
+	@echo "Updating Bower Repo"
+	@PT_SEMVER_INC_TYPE=${INC} node update-bower.js
 	@cp -f bower.json promise-testing-bower/bower.json
 	@cp -f promise-testing.js promise-testing-bower/promise-testing.js
-
-TESTVAL=$(shell node -p 'require("./package.json").version')
-
-push-bower: bower
-	@echo "pushing bower release v${TESTVAL}" ;
+	@echo "Tagging And Pushing Bower Repo v${PKG_VERSION}" ;
 	@if [ -d promise-testing-bower ] ; \
 	then \
 		cd promise-testing-bower ; \
 		git add bower.json ; \
 		git add promise-testing.js ; \
-		git commit -m "releasing v${TESTVAL}" ; \
-		git tag -f -a v${TESTVAL} -m "tagging v${TESTVAL}" ; \
+		git commit -m "releasing v${PKG_VERSION}" ; \
+		git tag -f -a v${PKG_VERSION} -m "tagging v${PKG_VERSION}" ; \
 		git push ; \
 		git push origin --tags; \
 	else \
-		echo "ERROR RELEASING BOWER" ; \
+		echo "ERROR: Bower Folder Wasnt There!" ; \
 	fi;
-
-release: push-bower
-	@echo "tagging and pushing"
-	@git add bower.json
-	@git add promise-testing.js
-	@git add component.json
-	@git commit -m "releasing v${TESTVAL}"
-	@git tag -f -a v${TESTVAL} -m "tagging v${TESTVAL}"
-	@git push
-	@git push origin --tags
-	@npm publish
 
 .PHONY: clean clean-all git-clean-show git-clean 
 .PHONY: test test-core test-performance test-aplus test-when test-browser test-browser-when test-everything
-.PHONY: default_build promise-testing-bower bower release
+.PHONY: default_build promise-testing-bower bower push-bower release
