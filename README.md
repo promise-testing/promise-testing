@@ -1,4 +1,4 @@
-Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-testing.png)](https://travis-ci.org/promise-testing/promise-testing)
+Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-testing.png)](https://travis-ci.org/promise-testing/promise-testing)[![Dependency Status](https://david-dm.org/promise-testing/promise-testing.png)](https://david-dm.org/promise-testing/promise-testing)[![devDependency Status](https://david-dm.org/promise-testing/promise-testing/dev-status.png)](https://david-dm.org/promise-testing/promise-testing#info=devDependencies)
 ===============
 
 **A testing library for then-able promises.**
