@@ -1,6 +1,6 @@
 {
   "name": "promise-testing",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "a utility for testing promise code",
   "main": "lib/promise-testing.js",
   "scripts": {
