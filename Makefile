@@ -9,7 +9,6 @@ endif
 
 default_build: test test-browser test-browser-when
 
-
 node_modules: package.json
 	@echo "Installing Node Dependencies"
 	@npm install
@@ -29,17 +28,7 @@ clean:
 	@rm -rf build
 	@rm -rf coverage
 	@rm -rf coverage-stage
-
-clean-all: clean
-	@echo "Cleaning up everything (including untracked dependencies)"
-	@rm -rf node_modules
-	@rm -rf components
-	
-git-clean-show:
-	@git clean -n -d -x -e .idea/
-
-git-clean:
-	@git clean -f -d -x -e .idea/
+	@rm -rf lib-cov
 	
 test: test-core test-aplus test-performance
 
@@ -90,6 +79,7 @@ coverage-stage: components lib-cov
 	@ln -sf ../lib-cov coverage-stage/lib
 	@ln -sf ../test coverage-stage/test
 	@ln -sf ../test-lib coverage-stage/test-lib
+	@ln -sf ../slow-tests coverage-stage/slow-tests
 	@ln -sf ../components coverage-stage/components
 	@ln -sf ../index.js coverage-stage/index.js
 	@ln -sf ../component.json coverage-stage/component.json

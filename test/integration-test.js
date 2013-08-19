@@ -226,7 +226,6 @@ describe('integration tests',function(){
                 noOpHandler.instance[0].playback.callsArgWith(1,'goodbye');
                 noOpHandler2.instance[0].playback.callsArgWith(1,'adios');
                 noOpHandler3.instance[0].playback.callsArgWith(1,'sionara');
-
             });
 
             function getContext(handlerConstructor,instanceIndex){
@@ -246,7 +245,6 @@ describe('integration tests',function(){
             }
 
             it('will be the same for all handlers in the same chain', function (done) {
-
                 resolve('hello');
 
                 delay(function(){
@@ -337,6 +335,28 @@ describe('integration tests',function(){
                 remove();
                 p = p.prop3;
                 expect(props).to.eql(['prop2']);
+            });
+
+            it('will only remove itself',function(){
+                var props4=[],remove4;
+                properties.addProperty('prop4',function(propName,listeners){
+                    remove4 = listeners.addPropertyListener(function(added){
+                        props4.push(added);
+                    });
+                });
+
+                var p = engine.wrap(promise).then.prop1.prop4;
+                expect(props).to.eql(['prop4']);
+                expect(props4).to.eql([]);
+
+                p = p.prop3;
+                expect(props).to.eql(['prop4','prop3']);
+                expect(props4).to.eql(['prop3']);
+
+                remove4();
+                p  = p.prop2;
+                expect(props).to.eql(['prop4','prop3','prop2']);
+                expect(props4).to.eql(['prop3']);
             });
 
             it('will not here properties on subsequent chains (after a then)',function(){
