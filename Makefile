@@ -101,7 +101,7 @@ docs: examples/*
 	@./node_modules/.bin/docco -l parallel examples/*
 	@touch docs
 
-PKG_VERSION=$(shell node -p 'require("./package.json").version')
+PKG_VERSION=$(shell node -e 'console.log(require("./package.json").version)')
 
 release: promise-testing.js
 	@echo "Updating From Version: ${PKG_VERSION}"
