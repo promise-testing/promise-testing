@@ -157,15 +157,18 @@ describe('promise-testing',function(){
     });
 
     describe('property access',function(){
+        //done
         it('then will not have a "to" sub-property by default',function(){
             expect(promise.then).not.to.have.property('to');
         });
 
+        //done
         it('adding a "to" thenProperty will create a "to" sub property on promise.then',function(){
             properties.addProperty('to',function(){});
             expect(promise.then).to.have.property('to');
         });
 
+        //done
         it('accessing the "to" property will instantiate a new instance of the handler',function(){
             var spy = sinon.spy();
             properties.addProperty('to',spy);
@@ -176,6 +179,7 @@ describe('promise-testing',function(){
         });
     });
 
+    //done
     it('executing a property will call recordExecution on handler and pass arguments',function(){
         var constructor = sinon.spy(function(){
             this.recordExecution = function(){};
@@ -190,6 +194,7 @@ describe('promise-testing',function(){
         expect(instance.recordExecution.firstCall.thisValue).to.equal(instance);
     });
 
+    //done
     it('named handler utility method',function(){
 
         new handler1('prop1');
@@ -208,6 +213,7 @@ describe('promise-testing',function(){
         expect(handler1.secondCall).to.have.been.calledAfter(handler2.firstCall);
     });
 
+    //done
     it('handler instantiation will happen in order properties are accessed',function(){
         var constructor1 = namedSpy('constructor1');
         var constructor2 = namedSpy('constructor2');

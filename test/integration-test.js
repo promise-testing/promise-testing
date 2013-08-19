@@ -96,8 +96,8 @@ describe('integration tests',function(){
                 var noOpHandler = sinon.spy(function noOpHandler_(){
                     this.recordExecution = function recordExecution(){};
                     this.playback = function playback(lastResult,next,ctx){next(lastResult)};
-                    sinon.spy(this,'recordExecution');
-                    sinon.spy(this,'playback');
+                    sinon.stub(this,'recordExecution');
+                    sinon.stub(this,'playback');
                     noOpHandler.instance.push(this);
                 });
                 noOpHandler.instance=[];
@@ -119,6 +119,7 @@ describe('integration tests',function(){
         });
 
         describe('access',function(){
+
             it('will instantiate a new instance of the handler',function(){
                 properties.addProperty('to',noOpHandler);
                 expect(noOpHandler).not.to.have.been.called;
@@ -155,6 +156,26 @@ describe('integration tests',function(){
                 expect(noOpHandler3.firstCall).to.have.been.calledBefore(noOpHandler2.firstCall);
             });
 
+            it('a handler will have its propName automatically set to propName after instantiation',function(){
+                properties.addProperty('blah',noOpHandler);
+                engine.wrap(promise).then.blah;
+                expect(noOpHandler.instance[0].propName).to.equal('blah')
+            });
+
+            xit('a handler will have its propName automatically set before constructor is called',function(){
+                properties.addProperty('foo',function(){
+                    expect(this.propName).to.equal('foo');
+                });
+                engine.wrap(promise).then.foo;
+            });
+
+            it('a handler will throw an error if the constructor sets the wrong propName',function(){
+                properties.addProperty('foo',function(){
+                    this.propName='bar';
+                });
+                expect(function(){engine.wrap(promise).then.foo}).to.throw();
+            })
+
         }) ;
 
         describe('execution',function(){
@@ -186,30 +207,142 @@ describe('integration tests',function(){
                 expect(function(){engine.wrap(promise).then.dontExecute()}).to.throw(/dontExecute/i);
             });
 
-            it('handlers without recordExecutionMethods can be accessed without an Error',function(){
+            it('handlers without recordExecutionMethods can be accessed (not executed) without an Error',function(){
                 properties.addProperty('dontExecute',function(){this.playback=noOp;});
                 expect(function(){engine.wrap(promise).then.dontExecute}).not.to.throw();
             });
 
-            it('a handler will have its propName automatically set to propName after instantiation',function(){
-                properties.addProperty('blah',noOpHandler);
-                engine.wrap(promise).then.blah;
-                expect(noOpHandler.instance[0].propName).to.equal('blah')
-            });
-
-            xit('a handler will have its propName automatically set before constructor is called',function(){
-                properties.addProperty('blah',function(){
-                    expect(this.propName).to.equal('blah');
-                });
-                engine.wrap(promise).then.blah;
-
-            });
-
         }) ;
 
+        describe('context',function(){
 
+            beforeEach(function(){
+                properties.addProperty('prop1',noOpHandler);
+                properties.addProperty('prop2',noOpHandler2);
+                properties.addProperty('prop3',noOpHandler3);
 
-    })
+                engine.wrap(promise).then.prop1.prop2.prop3;
 
+                noOpHandler.instance[0].playback.callsArgWith(1,'goodbye');
+                noOpHandler2.instance[0].playback.callsArgWith(1,'adios');
+                noOpHandler3.instance[0].playback.callsArgWith(1,'sionara');
 
+            });
+
+            function getContext(handlerConstructor,instanceIndex){
+                return (handlerConstructor || noOpHandler).instance[instanceIndex || 0].playback.firstCall.args[2];
+            }
+
+            function delay(fn,done){
+                setTimeout(function(){
+                    try {
+                        fn();
+                        done();
+                    }
+                    catch(e){
+                        done(e);
+                    }
+                },30);
+            }
+
+            it('will be the same for all handlers in the same chain', function (done) {
+
+                resolve('hello');
+
+                delay(function(){
+
+                    var ctx = getContext(noOpHandler);
+                    var ctx2 = getContext(noOpHandler2);
+                    var ctx3 = getContext(noOpHandler3);
+
+                    expect(ctx).to.equal(ctx2);
+                    expect(ctx).to.equal(ctx3);
+                },done)
+            });
+
+            it('will be of type "reject" if promise is rejected',function(done){
+                reject('foo');
+                delay(function(){
+                    expect(getContext()).to.have.property('type').equal('reject');
+                },done);
+            });
+
+            it('will be of type "result" if promise is resolved',function(done){
+                resolve('bar');
+                delay(function(){
+                    expect(getContext()).to.have.property('type').equal('result');
+                },done);
+            });
+
+            it('will have the resolution value on property .result',function(done){
+                resolve('hello');
+                delay(function(){
+                    expect(getContext()).to.have.property('result').equal('hello');
+                },done)
+            });
+
+            it('will have the reason for rejection on property .reason', function (done) {
+                reject('goodbye');
+                delay(function(){
+                    expect(getContext()).to.have.property('reason').equal('goodbye')
+                },done);
+            });
+        });
+
+        describe('properties', function () {
+            it('hasProperty returns false if no handler is defined for that property', function () {
+                expect(properties.hasProperty('myProp')).to.equal(false);
+            });
+
+            it('hasProperty returns true if that property is already defined',function(){
+                properties.addProperty('myProp',noOpHandler);
+                expect(properties.hasProperty('myProp')).to.equal(true);
+            });
+
+            it('will throw an error if you try to add the same property twice',function(){
+                properties.addProperty('prop1',noOpHandler);
+                expect(function(){properties.addProperty('prop1',noOpHandler)}).to.throw();
+            });
+        });
+
+        describe('propertyListeners',function(){
+            var props,remove;
+
+            beforeEach(function(){
+                props = [];
+                properties.addProperty('prop1',function(propName,listeners){
+                    remove = listeners.addPropertyListener(function(added){
+                        props.push(added);
+                    });
+                });
+
+                properties.addProperty('prop2',noOpHandler2);
+                properties.addProperty('prop3',noOpHandler3);
+            });
+
+            it('can be added to listen for future properties in the chain',function(){
+                var p = engine.wrap(promise).then.prop1;
+                expect(props).to.eql([]);
+                p = p.prop2;
+                expect(props).to.eql(['prop2']);
+                p = p.prop3;
+                expect(props).to.eql(['prop2','prop3']);
+            });
+
+            it('can be removed to stop listening',function(){
+                var p = engine.wrap(promise).then.prop1;
+                expect(props).to.eql([]);
+                p = p.prop2;
+                expect(props).to.eql(['prop2']);
+                remove();
+                p = p.prop3;
+                expect(props).to.eql(['prop2']);
+            });
+
+            it('will not here properties on subsequent chains (after a then)',function(){
+                engine.wrap(promise).then.prop1.prop2.then.prop3.prop2.prop3;
+                expect(props).to.eql(['prop2']);
+            })
+        });
+    });
 });
