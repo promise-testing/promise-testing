@@ -1,3 +1,4 @@
+[![browser support](https://ci.testling.com/USER/PROJECT.png)](https://ci.testling.com/USER/PROJECT)
 Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-testing.png)](https://travis-ci.org/promise-testing/promise-testing)[![Dependency Status](https://david-dm.org/promise-testing/promise-testing.png)](https://david-dm.org/promise-testing/promise-testing)[![devDependency Status](https://david-dm.org/promise-testing/promise-testing/dev-status.png)](https://david-dm.org/promise-testing/promise-testing#info=devDependencies)
 ===============
 

@@ -46,5 +46,19 @@
   },
   "optionalDependencies": {
     "karma-safari-launcher": "~0.1.1"
+  },
+  "testling":{
+      "files":[
+          "test/*.js",
+          "test-lib/*.js",
+          "index.js",
+          "lib/*.js"
+      ],
+      "browsers": [
+          "ie6", "ie7", "ie8", "ie9",
+          "firefox/15", "chrome/22", "opera/12", "safari/5.1"
+      ],
+      "harness":"mocha"
+
   }
 }
