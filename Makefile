@@ -106,14 +106,15 @@ PKG_VERSION=$(shell node -e 'console.log(require("./package.json").version)')
 release: promise-testing.js
 	@echo "Updating From Version: ${PKG_VERSION}"
 	@PT_SEMVER_INC_TYPE=${INC} node update-bower.js
-	@echo "Updated To Version: ${PKG_VERSION}"
+	$(eval NEW_VERSION=$(shell node -e 'console.log(require("./package.json").version)'))
+	@echo "Updated To Version: ${NEW_VERSION}"
 	@echo "Tagging and Pushing to GitHub"
 	@git add bower.json
 	@git add promise-testing.js
 	@git add component.json
 	@git add package.json
-	@git commit -m "releasing v${PKG_VERSION}"
-	@git tag -f -a v${PKG_VERSION} -m "tagging v${PKG_VERSION}"
+	@git commit -m "releasing v${NEW_VERSION}"
+	@git tag -f -a v${NEW_VERSION} -m "tagging v${NEW_VERSION}"
 	@git push
 	@git push origin --tags
 	@echo "Publishing to npm"
@@ -122,17 +123,16 @@ release: promise-testing.js
 	@rm -rf promise-testing-bower
 	@git clone git@github.com:promise-testing/promise-testing-bower
 	@echo "Updating Bower Repo"
-	@PT_SEMVER_INC_TYPE=${INC} node update-bower.js
 	@cp -f bower.json promise-testing-bower/bower.json
 	@cp -f promise-testing.js promise-testing-bower/promise-testing.js
-	@echo "Tagging And Pushing Bower Repo v${PKG_VERSION}" ;
+	@echo "Tagging And Pushing Bower Repo v${NEW_VERSION}" ;
 	@if [ -d promise-testing-bower ] ; \
 	then \
 		cd promise-testing-bower ; \
 		git add bower.json ; \
 		git add promise-testing.js ; \
-		git commit -m "releasing v${PKG_VERSION}" ; \
-		git tag -f -a v${PKG_VERSION} -m "tagging v${PKG_VERSION}" ; \
+		git commit -m "releasing v${NEW_VERSION}" ; \
+		git tag -f -a v${NEW_VERSION} -m "tagging v${NEW_VERSION}" ; \
 		git push ; \
 		git push origin --tags; \
 	else \
