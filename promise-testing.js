@@ -197,7 +197,14 @@ require.relative = function(parent) {
   return localRequire;
 };
 require.register("promise-testing/index.js", function(exports, require, module){
-module.exports = require('./lib/promise-testing.js');
+
+var utils = require('./lib/handler-utils.js');
+var Properties = require('./lib/properties.js');
+var PropertyListeners = require('./lib/property-listeners.js');
+var Context = require('./lib/context.js');
+var ChaiFlavor = require('./lib/chai-flavor.js');
+
+module.exports = require('./lib/promise-testing.js')(utils,Properties,PropertyListeners,Context,ChaiFlavor);
 });
 require.register("promise-testing/lib/chai-flavor.js", function(exports, require, module){
 function ChaiFlavor(chai){
@@ -367,8 +374,8 @@ function buildHandler(definition){
         if(constructor) constructor.apply(this,arguments);
     }
 
-    if(recordExecution === true){
-        recordExecution = function(){this.args = arguments;};
+    if(recordExecution == true){
+        recordExecution = function(){this.args = Array.prototype.slice.call(arguments);};
     }
     else if(isArray(recordExecution)){
         var array = recordExecution;
@@ -417,11 +424,9 @@ module.exports = {
 
 });
 require.register("promise-testing/lib/promise-testing.js", function(exports, require, module){
-var utils = require('./handler-utils.js');
-var Properties = require('./properties.js');
-var PropertyListeners = require('./property-listeners.js');
-var Context = require('./context.js');
-var ChaiFlavor = require('./chai-flavor.js');
+
+function inject(utils,Properties,PropertyListeners,Context,ChaiFlavor){
+
 
 function PromiseTester(){
     var properties = new Properties();
@@ -498,7 +503,11 @@ function PromiseTester(){
         isWrapped = false;
         muteActions = true;
         try {
-            promise.then.then;
+            var firstThen = promise && promise.then;
+            if(typeof firstThen !== 'function'){
+                throw new Error(promise + ' is not a promise');
+            }
+            firstThen.then;
             return isWrapped;
         }
         finally {
@@ -538,8 +547,11 @@ function PromiseTester(){
         use(ChaiFlavor(chai));
     }
 }
+    return PromiseTester;
 
-module.exports = PromiseTester;
+}
+
+module.exports = inject;
 });
 require.register("promise-testing/lib/properties.js", function(exports, require, module){
 function Properties() {
@@ -565,17 +577,13 @@ function Properties() {
 
    this.addProperty = addProperty;
    this.createHandler = createHandler;
-   function simpleBind(target,fn){
-       return function(){
-           fn.apply(target,Array.prototype.slice.call(arguments));
-       }
-   }
-   this.getPropertyNames = function(){
-       return Object.getOwnPropertyNames(thenPropertyHandlers);
-   };
-   this.hasProperty = function(prop){
-       return thenPropertyHandlers.hasOwnProperty(prop);
-   };
+
+    this.getPropertyNames = function(){
+        return Object.getOwnPropertyNames(thenPropertyHandlers);
+    };
+    this.hasProperty = function(prop){
+        return thenPropertyHandlers.hasOwnProperty(prop);
+    };
 }
 
 module.exports = Properties;
