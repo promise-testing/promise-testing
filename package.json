@@ -55,8 +55,11 @@
           "lib/*.js"
       ],
       "browsers": [
-          "ie6", "ie7", "ie8", "ie9",
-          "firefox/15", "chrome/22", "opera/12", "safari/5.1"
+          "ie6", "ie7", "ie8", "ie9", "ie10",
+          "firefox/16","firefox/17","firefox/18","firefox/19","nightly",
+          "chrome/22", "chrome/23", "chrome/24","chrome/25","canary",
+          "opera/11","opera/11.5","opera/11.6","opera/12", "next",
+          "safari/4.0","safari/5.0.5","safari/5.1"
       ],
       "harness":"mocha"
 
