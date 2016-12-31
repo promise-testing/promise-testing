@@ -7,7 +7,7 @@ Promise Testing [![Build Status](https://travis-ci.org/promise-testing/promise-t
 * Implementation independent. Should work with any [Promise/A+](http://promises-aplus.github.io/promises-spec/) conformant library. (Test suite runs against [Q](https://github.com/kriskowal/q) and [When](https://github.com/cujojs/when)).
 * Runs in [Node](http://nodejs.org) or directly in the browser.
 * Support for [NPM](https://npmjs.org/) and [Component](https://github.com/component/component) package managers.
-* Test/Assertion framework agnostic. Support for [Mocha](http://visionmedia.github.io/mocha/) and [Chai](http://chaijs.com/) built in.
+* Test/Assertion framework agnostic. Support for [Mocha](http://mochajs.org/) and [Chai](http://chaijs.com/) built in.
 
 Quick Start
 ===========
